@@ -1,0 +1,403 @@
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.app-header {
+  text-align: center;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.legend {
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  background: white;
+  padding: 15px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.legend h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 8px;
+}
+
+.color-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-item span {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.instructions {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.instructions h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.matrix-container {
+  flex: 1;
+  background: white;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.capability-matrix {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.capability-matrix th,
+.capability-matrix td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 0;
+  position: relative;
+}
+
+.capability-matrix th {
+  text-align: center;
+  padding: 0;
+  position: relative;
+}
+
+.row-header {
+  width: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white;
+  font-weight: 600;
+  padding: 8px 4px;
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+.week-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  padding: 6px 4px;
+  font-size: 0.8rem;
+  border: 1px solid #ddd;
+}
+
+.column-header {
+  width: calc((100% - 50px) / 36);
+  max-width: calc((100% - 50px) / 36);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+  color: white;
+  font-weight: 500;
+  padding: 4px 2px;
+  font-size: 0.7rem;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 100%;
+  padding: 4px;
+}
+
+.week-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+.week-number-input {
+  width: 25px;
+  height: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px;
+  outline: none;
+}
+
+.week-number-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.week-number-input:focus {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.week-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.week-start {
+  border-left: 3px solid #667eea !important;
+}
+
+.row-number {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+  padding: 0;
+  border-right: 2px solid #667eea;
+  width: 50px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.grid-cell {
+  width: calc((100% - 50px) / 36);
+  max-width: calc((100% - 50px) / 36);
+  padding: 1px;
+  height: calc((100vh - 140px) / 30);
+  min-height: 25px;
+  overflow: hidden;
+}
+
+.cell-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-dropdown {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 0;
+}
+
+.color-dropdown:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.color-dropdown:focus {
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+}
+
+.color-dropdown option {
+  background: white;
+  color: #333;
+  padding: 5px;
+  text-shadow: none;
+}
+
+/* Instructions styling */
+.instructions {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #667eea;
+  margin-top: 15px;
+}
+
+.instructions h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.instructions li {
+  margin-bottom: 4px;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Responsive design */
+@media (max-width: 1400px) {
+  .legend {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+    padding: 10px;
+  }
+
+  .legend h3 {
+    font-size: 1rem;
+  }
+
+  .color-dropdown {
+    font-size: 0.6rem;
+  }
+
+  .week-number-input {
+    width: 22px;
+    height: 18px;
+    font-size: 0.65rem;
+  }
+
+  .week-label {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .app-header h1 {
+    font-size: 1.8rem;
+    padding: 8px;
+  }
+
+  .legend {
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    padding: 8px;
+  }
+
+  .legend h3 {
+    font-size: 0.95rem;
+  }
+
+  .color-dropdown {
+    font-size: 0.55rem;
+  }
+
+  .week-number-input {
+    width: 20px;
+    height: 16px;
+    font-size: 0.6rem;
+  }
+
+  .week-label {
+    font-size: 0.55rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-header h1 {
+    font-size: 1.5rem;
+    padding: 6px;
+  }
+
+  .legend {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    padding: 6px;
+  }
+
+  .legend h3 {
+    font-size: 0.85rem;
+  }
+
+  .color-dropdown {
+    font-size: 0.5rem;
+  }
+
+  .capability-matrix th {
+    padding: 2px 1px;
+    font-size: 0.65rem;
+  }
+
+  .week-number-input {
+    width: 18px;
+    height: 14px;
+    font-size: 0.55rem;
+  }
+
+  .week-label {
+    font-size: 0.5rem;
+  }
+}
+
+/* No scrolling - everything fits on screen */
