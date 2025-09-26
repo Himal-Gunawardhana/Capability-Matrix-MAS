@@ -59,6 +59,11 @@ A React-based capability matrix for planning and tracking capabilities over a 3-
 
 4. Open your browser and navigate to `http://localhost:3000`
 
+## 🌐 Live Demo
+
+The application is hosted on GitHub Pages and can be accessed at:
+**https://Himal-Gunawardhana.github.io/Capability-Matrix-MAS/**
+
 ## How to Use
 
 1. **Adding Capabilities**: Click on any cell's dropdown and select a color
