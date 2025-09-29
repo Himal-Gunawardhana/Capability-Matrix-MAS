@@ -178,6 +178,7 @@ const App = () => {
   return (
     <div className="app">
       <header className="app-header">
+        <h1>3 Month Capability Matrix</h1>
         <div className="update-info">
           <div className="update-field">
             <label>Updated Date:</label>
@@ -213,7 +214,6 @@ const App = () => {
             />
           </div>
         </div>
-        <h1>3 Month Capability Matrix</h1>
       </header>
 
       <div className="main-content">
@@ -227,20 +227,23 @@ const App = () => {
                   style={{ backgroundColor: color.color }}
                 ></div>
                 <div className="image-upload-section">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(color.id, e)}
-                    className="image-upload-input"
-                    id={`upload-${color.id}`}
-                  />
-                  <label
-                    htmlFor={`upload-${color.id}`}
-                    className="upload-button"
-                  >
-                    Browse
-                  </label>
-                  {colorImages[color.id] && (
+                  {!colorImages[color.id] ? (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(color.id, e)}
+                        className="image-upload-input"
+                        id={`upload-${color.id}`}
+                      />
+                      <label
+                        htmlFor={`upload-${color.id}`}
+                        className="upload-button"
+                      >
+                        Browse
+                      </label>
+                    </>
+                  ) : (
                     <div className="uploaded-image">
                       <img
                         src={colorImages[color.id]}
