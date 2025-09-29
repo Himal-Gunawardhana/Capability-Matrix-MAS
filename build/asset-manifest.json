@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Capability-Matrix-MAS/static/css/main.d64aef22.css",
+    "main.js": "/Capability-Matrix-MAS/static/js/main.b9b704c1.js",
+    "index.html": "/Capability-Matrix-MAS/index.html",
+    "main.d64aef22.css.map": "/Capability-Matrix-MAS/static/css/main.d64aef22.css.map",
+    "main.b9b704c1.js.map": "/Capability-Matrix-MAS/static/js/main.b9b704c1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d64aef22.css",
+    "static/js/main.b9b704c1.js"
+  ]
+}
