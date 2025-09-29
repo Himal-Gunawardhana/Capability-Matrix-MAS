@@ -38,6 +38,16 @@ const App = () => {
   const [gridData, setGridData] = useState(createInitialGrid());
   const [weekNumbers, setWeekNumbers] = useState(createInitialWeekNumbers());
 
+  // State for update information
+  const [updateInfo, setUpdateInfo] = useState({
+    updatedDate: "",
+    updatedTime: "",
+    updatedBy: "",
+  });
+
+  // State for color images
+  const [colorImages, setColorImages] = useState({});
+
   const handleColorChange = (cellId, colorId) => {
     setGridData((prevGrid) => ({
       ...prevGrid,
@@ -52,6 +62,27 @@ const App = () => {
         ...prevWeekNumbers,
         [week]: value,
       }));
+    }
+  };
+
+  const handleUpdateInfoChange = (field, value) => {
+    setUpdateInfo((prevInfo) => ({
+      ...prevInfo,
+      [field]: value,
+    }));
+  };
+
+  const handleImageUpload = (colorId, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setColorImages((prevImages) => ({
+          ...prevImages,
+          [colorId]: e.target.result,
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -147,6 +178,41 @@ const App = () => {
   return (
     <div className="app">
       <header className="app-header">
+        <div className="update-info">
+          <div className="update-field">
+            <label>Updated Date:</label>
+            <input
+              type="text"
+              placeholder="Enter date"
+              value={updateInfo.updatedDate}
+              onChange={(e) =>
+                handleUpdateInfoChange("updatedDate", e.target.value)
+              }
+            />
+          </div>
+          <div className="update-field">
+            <label>Updated Time:</label>
+            <input
+              type="text"
+              placeholder="Enter time"
+              value={updateInfo.updatedTime}
+              onChange={(e) =>
+                handleUpdateInfoChange("updatedTime", e.target.value)
+              }
+            />
+          </div>
+          <div className="update-field">
+            <label>Updated By:</label>
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={updateInfo.updatedBy}
+              onChange={(e) =>
+                handleUpdateInfoChange("updatedBy", e.target.value)
+              }
+            />
+          </div>
+        </div>
         <h1>3 Month Capability Matrix</h1>
       </header>
 
@@ -157,23 +223,35 @@ const App = () => {
             {colorOptions.slice(1).map((color) => (
               <div key={color.id} className="legend-item">
                 <div
-                  className="legend-color"
+                  className="legend-color-circle"
                   style={{ backgroundColor: color.color }}
                 ></div>
-                <span>{color.label}</span>
+                <div className="image-upload-section">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(color.id, e)}
+                    className="image-upload-input"
+                    id={`upload-${color.id}`}
+                  />
+                  <label
+                    htmlFor={`upload-${color.id}`}
+                    className="upload-button"
+                  >
+                    Browse
+                  </label>
+                  {colorImages[color.id] && (
+                    <div className="uploaded-image">
+                      <img
+                        src={colorImages[color.id]}
+                        alt={`${color.label} representation`}
+                        className="color-image"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
-          </div>
-
-          <div className="instructions">
-            <h4>Instructions:</h4>
-            <ul>
-              <li>Use the dropdown in each cell to select a color</li>
-              <li>Select "None" to clear a cell</li>
-              <li>Edit week numbers in the header text boxes</li>
-              <li>3 columns per week, 12 weeks total</li>
-              <li>No scrolling - everything fits on screen</li>
-            </ul>
           </div>
         </div>
 
@@ -181,12 +259,12 @@ const App = () => {
           <table className="capability-matrix">
             <thead>
               <tr>
-                <th className="row-header" rowSpan={2}>No.</th>
+                <th className="row-header" rowSpan={2}>
+                  No.
+                </th>
                 {generateWeekHeaders().weekHeaders}
               </tr>
-              <tr>
-                {generateWeekHeaders().columnHeaders}
-              </tr>
+              <tr>{generateWeekHeaders().columnHeaders}</tr>
             </thead>
             <tbody>{generateGridRows()}</tbody>
           </table>

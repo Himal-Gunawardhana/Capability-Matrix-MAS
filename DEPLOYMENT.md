@@ -5,6 +5,7 @@ Your 3 Month Capability Matrix is now configured for GitHub Pages hosting! 🎉
 ## What I've Done
 
 1. **Created GitHub Actions Workflow** (`.github/workflows/deploy.yml`)
+
    - Automatically builds your React app on every push to main branch
    - Deploys the built files to GitHub Pages
    - Uses the latest GitHub Actions for optimal performance
@@ -37,6 +38,7 @@ Once deployed, your site will be available at:
 ## Automatic Updates
 
 From now on, every time you push changes to the `main` branch:
+
 1. GitHub Actions will automatically build your app
 2. Deploy the updated version to GitHub Pages
 3. Your live site will be updated within minutes
@@ -44,6 +46,7 @@ From now on, every time you push changes to the `main` branch:
 ## Troubleshooting
 
 If the deployment fails:
+
 1. Check the **Actions** tab in your GitHub repository
 2. Look for any error messages in the workflow logs
 3. Common issues:
@@ -54,6 +57,7 @@ If the deployment fails:
 ## Custom Domain (Optional)
 
 If you want to use a custom domain:
+
 1. Add a `CNAME` file to your `public/` folder with your domain name
 2. Configure your domain's DNS to point to GitHub Pages
 3. Update the homepage in package.json to your custom domain
