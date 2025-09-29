@@ -52,6 +52,23 @@
   background: white;
 }
 
+.clear-data-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.clear-data-button:hover {
+  background: rgb(220, 53, 69);
+}
+
 .app-header h1 {
   margin: 0;
   font-size: 2rem;

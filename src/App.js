@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 const App = () => {
@@ -35,18 +35,67 @@ const App = () => {
     return weekNumbers;
   };
 
-  const [gridData, setGridData] = useState(createInitialGrid());
-  const [weekNumbers, setWeekNumbers] = useState(createInitialWeekNumbers());
+  // Local Storage helper functions
+  const saveToLocalStorage = (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
+    }
+  };
+
+  const loadFromLocalStorage = (key, defaultValue) => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : defaultValue;
+    } catch (error) {
+      console.error("Error loading from localStorage:", error);
+      return defaultValue;
+    }
+  };
+
+  // Initialize state with localStorage data or defaults
+  const [gridData, setGridData] = useState(() =>
+    loadFromLocalStorage("capabilityMatrix_gridData", createInitialGrid())
+  );
+
+  const [weekNumbers, setWeekNumbers] = useState(() =>
+    loadFromLocalStorage(
+      "capabilityMatrix_weekNumbers",
+      createInitialWeekNumbers()
+    )
+  );
 
   // State for update information
-  const [updateInfo, setUpdateInfo] = useState({
-    updatedDate: "",
-    updatedTime: "",
-    updatedBy: "",
-  });
+  const [updateInfo, setUpdateInfo] = useState(() =>
+    loadFromLocalStorage("capabilityMatrix_updateInfo", {
+      updatedDate: "",
+      updatedTime: "",
+      updatedBy: "",
+    })
+  );
 
   // State for color images
-  const [colorImages, setColorImages] = useState({});
+  const [colorImages, setColorImages] = useState(() =>
+    loadFromLocalStorage("capabilityMatrix_colorImages", {})
+  );
+
+  // Auto-save to localStorage whenever data changes
+  useEffect(() => {
+    saveToLocalStorage("capabilityMatrix_gridData", gridData);
+  }, [gridData]);
+
+  useEffect(() => {
+    saveToLocalStorage("capabilityMatrix_weekNumbers", weekNumbers);
+  }, [weekNumbers]);
+
+  useEffect(() => {
+    saveToLocalStorage("capabilityMatrix_updateInfo", updateInfo);
+  }, [updateInfo]);
+
+  useEffect(() => {
+    saveToLocalStorage("capabilityMatrix_colorImages", colorImages);
+  }, [colorImages]);
 
   const handleColorChange = (cellId, colorId) => {
     setGridData((prevGrid) => ({
@@ -83,6 +132,30 @@ const App = () => {
         }));
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const clearAllData = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to clear all data? This cannot be undone."
+      )
+    ) {
+      // Clear localStorage
+      localStorage.removeItem("capabilityMatrix_gridData");
+      localStorage.removeItem("capabilityMatrix_weekNumbers");
+      localStorage.removeItem("capabilityMatrix_updateInfo");
+      localStorage.removeItem("capabilityMatrix_colorImages");
+
+      // Reset state to defaults
+      setGridData(createInitialGrid());
+      setWeekNumbers(createInitialWeekNumbers());
+      setUpdateInfo({
+        updatedDate: "",
+        updatedTime: "",
+        updatedBy: "",
+      });
+      setColorImages({});
     }
   };
 
@@ -213,6 +286,13 @@ const App = () => {
               }
             />
           </div>
+          <button
+            className="clear-data-button"
+            onClick={clearAllData}
+            title="Clear all saved data and reset to defaults"
+          >
+            Clear All Data
+          </button>
         </div>
       </header>
 
