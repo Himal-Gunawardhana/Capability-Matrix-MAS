@@ -247,52 +247,53 @@ const App = () => {
     }
     return rows;
   };
-
   return (
     <div className="app">
       <header className="app-header">
         <h1>3 Month Capability Matrix</h1>
         <div className="update-info">
-          <div className="update-field">
-            <label>Updated Date:</label>
-            <input
-              type="text"
-              placeholder="Enter date"
-              value={updateInfo.updatedDate}
-              onChange={(e) =>
-                handleUpdateInfoChange("updatedDate", e.target.value)
-              }
-            />
+          <div className="update-fields-row">
+            <div className="update-field">
+              <label>Updated Date:</label>
+              <input
+                type="text"
+                placeholder="Enter date"
+                value={updateInfo.updatedDate}
+                onChange={(e) =>
+                  handleUpdateInfoChange("updatedDate", e.target.value)
+                }
+              />
+            </div>
+            <div className="update-field">
+              <label>Updated Time:</label>
+              <input
+                type="text"
+                placeholder="Enter time"
+                value={updateInfo.updatedTime}
+                onChange={(e) =>
+                  handleUpdateInfoChange("updatedTime", e.target.value)
+                }
+              />
+            </div>
+            <div className="update-field">
+              <label>Updated By:</label>
+              <input
+                type="text"
+                placeholder="Enter name"
+                value={updateInfo.updatedBy}
+                onChange={(e) =>
+                  handleUpdateInfoChange("updatedBy", e.target.value)
+                }
+              />
+            </div>
+            <button
+              className="clear-data-button"
+              onClick={clearAllData}
+              title="Clear all saved data and reset to defaults"
+            >
+              Clear All Data
+            </button>
           </div>
-          <div className="update-field">
-            <label>Updated Time:</label>
-            <input
-              type="text"
-              placeholder="Enter time"
-              value={updateInfo.updatedTime}
-              onChange={(e) =>
-                handleUpdateInfoChange("updatedTime", e.target.value)
-              }
-            />
-          </div>
-          <div className="update-field">
-            <label>Updated By:</label>
-            <input
-              type="text"
-              placeholder="Enter name"
-              value={updateInfo.updatedBy}
-              onChange={(e) =>
-                handleUpdateInfoChange("updatedBy", e.target.value)
-              }
-            />
-          </div>
-          <button
-            className="clear-data-button"
-            onClick={clearAllData}
-            title="Clear all saved data and reset to defaults"
-          >
-            Clear All Data
-          </button>
         </div>
       </header>
 
