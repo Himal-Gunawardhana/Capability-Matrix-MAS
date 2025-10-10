@@ -26,6 +26,19 @@ const App = () => {
     return grid;
   };
 
+  // Create initial chassis base state (30 rows × 3 sub-columns)
+  const createInitialChassisBase = () => {
+    const chassisBase = {};
+    for (let row = 1; row <= 30; row++) {
+      for (let week = 1; week <= 12; week++) {
+        for (let col = 1; col <= 3; col++) {
+          grid[`${row}-${week}-${col}`] = "";
+        }
+      }
+    }
+    return chassisBase;
+  };
+
   // Create initial week numbers state
   const createInitialWeekNumbers = () => {
     const weekNumbers = {};
@@ -59,6 +72,10 @@ const App = () => {
     loadFromLocalStorage("capabilityMatrix_gridData", createInitialGrid())
   );
 
+  const [chassisBaseData, setChassisBaseData] = useState(() =>
+    loadFromLocalStorage("capabilityMatrix_chassisBase", createInitialChassisBase())
+  );
+
   const [weekNumbers, setWeekNumbers] = useState(() =>
     loadFromLocalStorage(
       "capabilityMatrix_weekNumbers",
@@ -86,6 +103,10 @@ const App = () => {
   }, [gridData]);
 
   useEffect(() => {
+    saveToLocalStorage("capabilityMatrix_chassisBase", chassisBaseData);
+  }, [chassisBaseData]);
+
+  useEffect(() => {
     saveToLocalStorage("capabilityMatrix_weekNumbers", weekNumbers);
   }, [weekNumbers]);
 
@@ -100,6 +121,13 @@ const App = () => {
   const handleColorChange = (cellId, colorId) => {
     setGridData((prevGrid) => ({
       ...prevGrid,
+      [cellId]: colorId,
+    }));
+  };
+
+  const handleChassisBaseChange = (cellId, colorId) => {
+    setChassisBaseData((prevData) => ({
+      ...prevData,
       [cellId]: colorId,
     }));
   };
@@ -143,12 +171,14 @@ const App = () => {
     ) {
       // Clear localStorage
       localStorage.removeItem("capabilityMatrix_gridData");
+      localStorage.removeItem("capabilityMatrix_chassisBase");
       localStorage.removeItem("capabilityMatrix_weekNumbers");
       localStorage.removeItem("capabilityMatrix_updateInfo");
       localStorage.removeItem("capabilityMatrix_colorImages");
 
       // Reset state to defaults
       setGridData(createInitialGrid());
+      setChassisBaseData(createInitialChassisBase());
       setWeekNumbers(createInitialWeekNumbers());
       setUpdateInfo({
         updatedDate: "",
@@ -211,6 +241,35 @@ const App = () => {
           {row}
         </td>
       );
+
+      // Chassis base cells (3 sub-columns)
+      for (let col = 1; col <= 3; col++) {
+        const cellId = `${row}-${col}`;
+        const selectedColorId = chassisBaseData[cellId];
+        const selectedColor = getColorById(selectedColorId);
+
+        cells.push(
+            <td key={cellId} className="grid-cell">
+              <div className="cell-content">
+                <select
+                  className="color-dropdown"
+                  value={selectedColorId}
+                  onChange={(e) => handleColorChange(cellId, e.target.value)}
+                  style={{
+                    backgroundColor: selectedColor.color,
+                    color: selectedColor.id === "yellow" ? "#333" : "#fff",
+                  }}
+                >
+                  {colorOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </td>
+          );
+      }
 
       // Week cells (12 weeks × 3 columns = 36 cells per row)
       for (let week = 1; week <= 12; week++) {
@@ -308,29 +367,30 @@ const App = () => {
                   style={{ backgroundColor: color.color }}
                 ></div>
                 <div className="image-upload-section">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(color.id, e)}
+                    className="image-upload-input"
+                    id={`upload-${color.id}`}
+                  />
                   {!colorImages[color.id] ? (
-                    <>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(color.id, e)}
-                        className="image-upload-input"
-                        id={`upload-${color.id}`}
-                      />
-                      <label
-                        htmlFor={`upload-${color.id}`}
-                        className="upload-button"
-                      >
-                        Browse
-                      </label>
-                    </>
+                    <label
+                      htmlFor={`upload-${color.id}`}
+                      className="upload-button"
+                    >
+                      Browse
+                    </label>
                   ) : (
                     <div className="uploaded-image">
-                      <img
-                        src={colorImages[color.id]}
-                        alt={`${color.label} representation`}
-                        className="color-image"
-                      />
+                      <label htmlFor={`upload-${color.id}`} style={{ cursor: 'pointer' }}>
+                        <img
+                          src={colorImages[color.id]}
+                          alt={`${color.label} representation`}
+                          className="color-image"
+                          title="Click to change image"
+                        />
+                      </label>
                     </div>
                   )}
                 </div>
@@ -346,9 +406,17 @@ const App = () => {
                 <th className="row-header" rowSpan={2}>
                   No.
                 </th>
+                <th className="chassis-header" colSpan={3}>
+                  Chassis base
+                </th>
                 {generateWeekHeaders().weekHeaders}
               </tr>
-              <tr>{generateWeekHeaders().columnHeaders}</tr>
+              <tr>
+                <th className="priority-header">Sub 1</th>
+                <th className="priority-header">Sub 2</th>
+                <th className="priority-header">Sub 3</th>
+                {generateWeekHeaders().columnHeaders}
+              </tr>
             </thead>
             <tbody>{generateGridRows()}</tbody>
           </table>

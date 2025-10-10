@@ -27,7 +27,7 @@
 .update-fields-row {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 
@@ -178,6 +178,13 @@
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid #ddd;
+  transition: all 0.2s ease;
+}
+
+.color-image:hover {
+  opacity: 0.8;
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .instructions {
@@ -246,6 +253,27 @@
   vertical-align: middle;
 }
 
+.chassis-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  font-weight: 600;
+  padding: 4px 2px;
+  font-size: 0.75rem;
+  border: 1px solid #ddd;
+}
+
+.priority-header {
+  background: linear-gradient(135deg, #34ce57 0%, #2bb380 100%);
+  color: white;
+  font-weight: 500;
+  padding: 3px 1px;
+  font-size: 0.65rem;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  width: 60px;
+  max-width: 60px;
+}
+
 .week-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -256,8 +284,8 @@
 }
 
 .column-header {
-  width: calc((100% - 50px) / 36);
-  max-width: calc((100% - 50px) / 36);
+  width: calc((100% - 50px - 300px) / 36);
+  max-width: calc((100% - 50px - 300px) / 36);
   background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
   color: white;
   font-weight: 500;
@@ -329,8 +357,17 @@
 }
 
 .grid-cell {
-  width: calc((100% - 50px) / 36);
-  max-width: calc((100% - 50px) / 36);
+  width: calc((100% - 50px - 300px) / 36);
+  max-width: calc((100% - 50px - 300px) / 36);
+  padding: 1px;
+  height: calc((100vh - 120px) / 30);
+  min-height: 22px;
+  overflow: hidden;
+}
+
+.chassis-cell {
+  width: calc((100% - 50px - 300px) / 36);
+  max-width: calc((100% - 50px - 300px) / 36);
   padding: 1px;
   height: calc((100vh - 120px) / 30);
   min-height: 22px;
@@ -499,4 +536,4 @@
   }
 }
 
-/* No scrolling - everything fits on screen */
+
