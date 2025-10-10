@@ -30,10 +30,8 @@ const App = () => {
   const createInitialChassisBase = () => {
     const chassisBase = {};
     for (let row = 1; row <= 30; row++) {
-      for (let week = 1; week <= 12; week++) {
-        for (let col = 1; col <= 3; col++) {
-          grid[`${row}-${week}-${col}`] = "";
-        }
+      for (let col = 1; col <= 3; col++) {
+        chassisBase[`${row}-${col}`] = "";
       }
     }
     return chassisBase;
