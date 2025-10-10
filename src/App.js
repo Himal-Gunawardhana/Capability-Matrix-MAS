@@ -123,13 +123,6 @@ const App = () => {
     }));
   };
 
-  const handleChassisBaseChange = (cellId, colorId) => {
-    setChassisBaseData((prevData) => ({
-      ...prevData,
-      [cellId]: colorId,
-    }));
-  };
-
   const handleWeekNumberChange = (week, value) => {
     // Only allow 2 digits
     if (value.length <= 2 && /^\d*$/.test(value)) {
