@@ -1,1489 +1,1510 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3 Month Capability Matrix</title>
-  
-  <!-- React from CDN -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <style>
-    /* Base Styles */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background-color: #f5f5f5;
-      overflow: hidden;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3 Month Capability Matrix</title>
+
+    <!-- React from CDN -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      /* Base Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+          "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f5f5f5;
+        overflow: hidden;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        overflow: hidden;
+        height: 100%;
+      }
+
+      #root {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* App Styles */
+      .app {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      .app-header {
+        text-align: center;
+        padding: 8px 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        position: relative;
+      }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      overflow: hidden;
-      height: 100%;
-    }
-
-    #root {
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* App Styles */
-    .app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .app-header {
-      text-align: center;
-      padding: 8px 15px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .csv-buttons {
-      position: absolute;
-      top: 8px;
-      right: 15px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .csv-button {
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .csv-button:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .csv-button:active {
-      transform: translateY(0);
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    .app-header h1 {
-      margin: 0 0 8px 0;
-      font-size: 1.6rem;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .update-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-top: 5px;
-    }
-
-    .update-fields-row {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .update-field {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .update-field label {
-      font-weight: 600;
-      font-size: 0.8rem;
-      white-space: nowrap;
-    }
-
-    .update-field input {
-      padding: 3px 6px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #333;
-      font-size: 0.8rem;
-      width: 100px;
-    }
-
-    .clear-data-button {
-      margin-top: 5px;
-      padding: 5px 12px;
-      background: rgba(220, 53, 69, 0.9);
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-    }
-
-    .clear-data-button:hover {
-      background: rgb(220, 53, 69);
-    }
-
-    .main-content {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    .legend {
-      width: 170px;
-      min-width: 170px;
-      max-width: 170px;
-      background: white;
-      padding: 10px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      border-right: 1px solid #ddd;
-      overflow-y: auto;
-      overflow-x: hidden;
-      flex-shrink: 0;
-    }
-
-    .legend h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #333;
-      font-size: 1rem;
-      border-bottom: 2px solid #667eea;
-      padding-bottom: 5px;
-    }
-
-    .color-legend {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .legend-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 8px;
-      border-radius: 6px;
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-    }
-
-    .legend-color-circle {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      border: 2px solid rgba(0, 0, 0, 0.1);
-      flex-shrink: 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .image-upload-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .image-upload-input {
-      display: none;
-    }
-
-    .upload-button {
-      padding: 4px 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: background-color 0.3s ease;
-    }
-
-    .upload-button:hover {
-      background: #5a6fd8;
-    }
-
-    .uploaded-image {
-      width: 100%;
-      max-width: 70px;
-    }
-
-    .color-image {
-      width: 100%;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .color-image:hover {
-      opacity: 0.8;
-      border-color: #667eea;
-      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    }
-
-    .matrix-container {
-      flex: 1;
-      background: white;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    .capability-matrix {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      max-width: 100%;
-      display: block;
-    }
-
-    .capability-matrix thead {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: white;
-    }
-
-    .capability-matrix thead tr {
-      display: table-row;
-    }
-
-    .sub-header-row {
-      display: table-row !important;
-    }
-
-    .capability-matrix tbody {
-      display: block;
-      overflow-y: auto;
-      overflow-x: hidden;
-      max-height: calc(100vh - 180px);
-      width: 100%;
-    }
-
-    .capability-matrix tbody tr {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-    }
-
-    /* Custom scrollbar styling */
-    .capability-matrix tbody::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    .capability-matrix tbody::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 5px;
-    }
-
-    .capability-matrix tbody::-webkit-scrollbar-thumb {
-      background: #667eea;
-      border-radius: 5px;
-    }
-
-    .capability-matrix tbody::-webkit-scrollbar-thumb:hover {
-      background: #5a6fd8;
-    }
-
-    .capability-matrix th,
-    .capability-matrix td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 0;
-      position: relative;
-    }
-
-    .row-header {
-      width: 50px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-      color: white;
-      font-weight: 600;
-      padding: 8px 4px;
-      font-size: 0.8rem;
-      vertical-align: middle;
-    }
-
-    .chassis-header {
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      color: white;
-      font-weight: 600;
-      padding: 4px 2px;
-      font-size: 0.75rem;
-      border: 1px solid #ddd;
-    }
-
-    .priority-header {
-      background: linear-gradient(135deg, #34ce57 0%, #2bb380 100%);
-      color: white;
-      font-weight: 500;
-      padding: 3px 1px;
-      font-size: 0.65rem;
-      border: 1px solid #ddd;
-      overflow: hidden;
-      width: calc((100% - 50px - 180px) / 36);
-      max-width: calc((100% - 50px - 180px) / 36);
-      min-width: calc((100% - 50px - 180px) / 36);
-    }
-
-    .week-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      font-weight: 600;
-      padding: 4px 2px;
-      font-size: 0.75rem;
-      border: 1px solid #ddd;
-    }
-
-    .column-header {
-      width: calc((100% - 50px - 180px) / 36);
-      max-width: calc((100% - 50px - 180px) / 36);
-      background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
-      color: white;
-      font-weight: 500;
-      padding: 3px 1px;
-      font-size: 0.65rem;
-      border: 1px solid #ddd;
-      overflow: hidden;
-    }
-
-    .header-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-      height: 100%;
-      padding: 4px;
-    }
-
-    .week-input-container {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      justify-content: center;
-    }
-
-    .week-number-input {
-      width: 22px;
-      height: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      text-align: center;
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 1px;
-      outline: none;
-    }
-
-    .week-number-input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .week-label {
-      font-size: 0.65rem;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .row-number {
-      background: #f8f9fa;
-      font-weight: 600;
-      color: #333;
-      padding: 0;
-      border-right: 2px solid #667eea;
-      width: 50px;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    .grid-cell {
-      width: calc((100% - 50px - 180px) / 36);
-      max-width: calc((100% - 50px - 180px) / 36);
-      padding: 1px;
-      height: calc((100vh - 120px) / 30);
-      min-height: 22px;
-      overflow: hidden;
-    }
-
-    .chassis-cell {
-      width: calc((100% - 50px - 180px) / 36);
-      max-width: calc((100% - 50px - 180px) / 36);
-      min-width: calc((100% - 50px - 180px) / 36);
-      background: #e8f5e9;
-    }
-
-    .cell-content {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .cell-dropdown {
-      width: 100%;
-      height: 100%;
-      border: 2px solid rgba(0, 0, 0, 0.2);
-      outline: none;
-      cursor: pointer;
-      font-size: 0;
-      font-weight: 600;
-      text-align: center;
-      padding: 0;
-      transition: all 0.2s ease;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: none;
-      text-indent: 0;
-      color: transparent;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .cell-dropdown option {
-      font-size: 0.8rem;
-      color: #000;
-      text-indent: 0;
-      padding: 5px;
-      font-weight: 500;
-    }
-
-    .cell-dropdown:hover {
-      border-color: rgba(0, 0, 0, 0.4);
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .cell-dropdown:focus {
-      border-color: #2196F3;
-      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-    }
-
-    .app-footer {
-      padding: 8px 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      text-align: right;
-      font-size: 0.85rem;
-      font-weight: 500;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-      flex-shrink: 0;
-    }
-
-    .app-footer span {
-      opacity: 0.95;
-      letter-spacing: 0.3px;
-    }
-
-    .cell-dropdown:hover {
-      opacity: 0.9;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-    }
-
-    .cell-dropdown:focus {
-      box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.5);
-    }
-
-    .cell-dropdown option {
-      background: white;
-      color: #333;
-      font-weight: 500;
-      padding: 8px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1400px) {
       .csv-buttons {
-        top: 6px;
-        right: 12px;
-        gap: 6px;
+        position: absolute;
+        top: 8px;
+        right: 15px;
+        display: flex;
+        gap: 8px;
       }
 
       .csv-button {
-        font-size: 0.75rem;
-        padding: 5px 10px;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
       }
 
-      .legend {
-        width: 150px;
-        min-width: 150px;
-        max-width: 150px;
+      .csv-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       }
 
-      .app-header h1 {
-        font-size: 1.4rem;
+      .csv-button:active {
+        transform: translateY(0);
       }
 
-      .update-field input {
-        width: 90px;
-        font-size: 0.75rem;
-      }
-
-      .week-number-input {
-        width: 20px;
-        font-size: 0.6rem;
-      }
-    }
-
-    @media (max-width: 1200px) {
-      .legend {
-        width: 130px;
-        min-width: 130px;
-        max-width: 130px;
-        padding: 8px;
-      }
-
-      .legend h3 {
-        font-size: 0.9rem;
+      .file-input {
+        display: none;
       }
 
       .app-header h1 {
-        font-size: 1.3rem;
+        margin: 0 0 8px 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .update-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 5px;
+      }
+
+      .update-fields-row {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .update-field {
+        display: flex;
+        align-items: center;
+        gap: 5px;
       }
 
       .update-field label {
-        font-size: 0.75rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        white-space: nowrap;
       }
 
       .update-field input {
-        width: 85px;
-        font-size: 0.7rem;
+        padding: 3px 6px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        font-size: 0.8rem;
+        width: 100px;
       }
 
-      .chassis-cell, .priority-header {
-        width: calc((100% - 50px - 165px) / 36);
-        max-width: calc((100% - 50px - 165px) / 36);
-        min-width: calc((100% - 50px - 165px) / 36);
+      .clear-data-button {
+        margin-top: 5px;
+        padding: 5px 12px;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
       }
 
-      .grid-cell {
-        width: calc((100% - 50px - 165px) / 36);
-        max-width: calc((100% - 50px - 165px) / 36);
+      .clear-data-button:hover {
+        background: rgb(220, 53, 69);
       }
 
-      .column-header {
-        width: calc((100% - 50px - 165px) / 36);
-        max-width: calc((100% - 50px - 165px) / 36);
-      }
-    }
-
-    @media (max-width: 1024px) {
       .main-content {
-        flex-direction: column;
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
       }
 
       .legend {
-        width: 100%;
-        max-width: 100%;
-        min-width: 100%;
+        width: 170px;
+        min-width: 170px;
+        max-width: 170px;
+        background: white;
         padding: 10px;
-        border-right: none;
-        border-bottom: 1px solid #ddd;
-        max-height: 150px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        border-right: 1px solid #ddd;
         overflow-y: auto;
+        overflow-x: hidden;
+        flex-shrink: 0;
       }
 
       .legend h3 {
-        margin-bottom: 8px;
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 1rem;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 5px;
       }
 
       .color-legend {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
       }
 
       .legend-item {
-        flex-direction: row;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 8px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+      }
+
+      .legend-color-circle {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-upload-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 8px;
-        padding: 6px 10px;
-        min-width: auto;
+        width: 100%;
+      }
+
+      .image-upload-input {
+        display: none;
+      }
+
+      .upload-button {
+        padding: 4px 12px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+      }
+
+      .upload-button:hover {
+        background: #5a6fd8;
       }
 
       .uploaded-image {
-        max-width: 50px;
+        width: 100%;
+        max-width: 70px;
       }
 
       .color-image {
-        height: 40px;
+        width: 100%;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .color-image:hover {
+        opacity: 0.8;
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
       }
 
       .matrix-container {
         flex: 1;
+        background: white;
         overflow: hidden;
-      }
-
-      .capability-matrix tbody {
-        max-height: calc(100vh - 280px);
-      }
-
-      .app-header h1 {
-        font-size: 1.2rem;
-      }
-
-      .csv-buttons {
-        position: static;
-        justify-content: center;
-        margin-bottom: 8px;
-      }
-
-      .csv-button {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-      }
-
-      .update-fields-row {
-        gap: 10px;
-      }
-
-      .update-field input {
-        width: 80px;
-        font-size: 0.7rem;
-      }
-
-      .clear-data-button {
-        font-size: 0.75rem;
-        padding: 4px 10px;
-      }
-
-      .grid-cell, .chassis-cell {
-        min-height: 25px;
-      }
-
-      .capability-matrix tbody {
-        max-height: calc(100vh - 250px);
-      }
-
-      .app-footer {
-        font-size: 0.75rem;
-        padding: 6px 15px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .app-header {
-        padding: 6px 10px;
-      }
-
-      .app-header h1 {
-        font-size: 1.1rem;
-        margin-bottom: 6px;
-      }
-
-      .csv-buttons {
-        position: static;
-        justify-content: center;
-        margin-bottom: 8px;
-        gap: 8px;
-      }
-
-      .csv-button {
-        font-size: 0.7rem;
-        padding: 5px 10px;
-      }
-
-      .update-fields-row {
+        position: relative;
+        display: flex;
         flex-direction: column;
-        gap: 6px;
-        align-items: center;
-      }
-
-      .update-field {
         width: 100%;
-        max-width: 250px;
-        justify-content: space-between;
+        max-width: 100%;
       }
 
-      .update-field input {
-        width: 120px;
-        font-size: 0.7rem;
-      }
-
-      .clear-data-button {
+      .capability-matrix {
         width: 100%;
-        max-width: 250px;
-        margin-top: 8px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        max-width: 100%;
+        display: block;
       }
 
-      .legend {
-        max-height: 120px;
-        padding: 8px;
+      .capability-matrix thead {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: white;
       }
 
-      .legend h3 {
-        font-size: 0.85rem;
-        margin-bottom: 6px;
+      .capability-matrix thead tr {
+        display: table-row;
       }
 
-      .legend-item {
-        padding: 5px 8px;
+      .sub-header-row {
+        display: table-row !important;
       }
 
-      .legend-color-circle {
-        width: 20px;
-        height: 20px;
+      .capability-matrix tbody {
+        display: block;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: calc(100vh - 180px);
+        width: 100%;
       }
 
-      .uploaded-image {
-        max-width: 40px;
+      .capability-matrix tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
       }
 
-      .color-image {
-        height: 35px;
+      /* Custom scrollbar styling */
+      .capability-matrix tbody::-webkit-scrollbar {
+        width: 10px;
       }
 
-      .upload-button {
-        font-size: 0.7rem;
-        padding: 3px 8px;
+      .capability-matrix tbody::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 5px;
+      }
+
+      .capability-matrix tbody::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 5px;
+      }
+
+      .capability-matrix tbody::-webkit-scrollbar-thumb:hover {
+        background: #5a6fd8;
       }
 
       .capability-matrix th,
       .capability-matrix td {
-        font-size: 0.6rem;
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 0;
+        position: relative;
       }
 
       .row-header {
-        width: 40px;
-        font-size: 0.7rem;
-        padding: 4px 2px;
-      }
-
-      .row-number {
-        width: 40px;
-      }
-
-      .chassis-header {
-        font-size: 0.7rem;
-        padding: 3px 2px;
-      }
-
-      .priority-header {
-        font-size: 0.6rem;
-        width: calc((100% - 40px - 150px) / 36);
-        max-width: calc((100% - 40px - 150px) / 36);
-        min-width: calc((100% - 40px - 150px) / 36);
-        padding: 2px 1px;
-      }
-
-      .chassis-cell {
-        width: calc((100% - 40px - 150px) / 36);
-        max-width: calc((100% - 40px - 150px) / 36);
-        min-width: calc((100% - 40px - 150px) / 36);
-      }
-
-      .week-header {
-        font-size: 0.7rem;
-        padding: 3px 2px;
-      }
-
-      .week-label {
-        font-size: 0.6rem;
-      }
-
-      .week-number-input {
-        width: 18px;
-        height: 16px;
-        font-size: 0.55rem;
-      }
-
-      .column-header {
-        font-size: 0.6rem;
-        padding: 2px 1px;
-        width: calc((100% - 40px - 150px) / 36);
-        max-width: calc((100% - 40px - 150px) / 36);
-      }
-
-      .grid-cell {
-        min-height: 22px;
-        width: calc((100% - 40px - 150px) / 36);
-        max-width: calc((100% - 40px - 150px) / 36);
-      }
-
-      .capability-matrix tbody {
-        max-height: calc(100vh - 300px);
-      }
-
-      .app-footer {
-        font-size: 0.7rem;
-        padding: 6px 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .app {
-        height: 100vh;
-        height: 100dvh; /* Dynamic viewport height for mobile */
-      }
-
-      .app-header {
-        padding: 5px 8px;
-      }
-
-      .app-header h1 {
-        font-size: 1rem;
-        margin-bottom: 5px;
-      }
-
-      .csv-buttons {
-        flex-direction: column;
-        gap: 6px;
-        width: 100%;
-        max-width: 200px;
-        margin: 0 auto 8px auto;
-      }
-
-      .csv-button {
-        width: 100%;
-        font-size: 0.7rem;
-        padding: 6px 10px;
-      }
-
-      .update-field label {
-        font-size: 0.7rem;
-      }
-
-      .update-field input {
-        width: 100px;
-        font-size: 0.65rem;
-        padding: 2px 4px;
-      }
-
-      .clear-data-button {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-      }
-
-      .legend {
-        max-height: 100px;
-        padding: 6px;
-      }
-
-      .legend h3 {
+        width: 50px;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+        color: white;
+        font-weight: 600;
+        padding: 8px 4px;
         font-size: 0.8rem;
-      }
-
-      .legend-item {
-        padding: 4px 6px;
-        gap: 6px;
-      }
-
-      .legend-color-circle {
-        width: 18px;
-        height: 18px;
-      }
-
-      .uploaded-image {
-        max-width: 35px;
-      }
-
-      .color-image {
-        height: 30px;
-      }
-
-      .upload-button {
-        font-size: 0.65rem;
-        padding: 2px 6px;
-      }
-
-      .matrix-container {
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .capability-matrix {
-        min-width: 600px;
-      }
-
-      .capability-matrix tbody {
-        max-height: calc(100vh - 280px);
-        max-height: calc(100dvh - 280px);
-      }
-
-      .row-header {
-        width: 35px;
-        font-size: 0.65rem;
-        padding: 3px 1px;
-      }
-
-      .row-number {
-        width: 35px;
-        font-size: 0.65rem;
+        vertical-align: middle;
       }
 
       .chassis-header {
-        font-size: 0.65rem;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        font-weight: 600;
+        padding: 4px 2px;
+        font-size: 0.75rem;
+        border: 1px solid #ddd;
       }
 
       .priority-header {
-        font-size: 0.55rem;
-        width: calc((100% - 35px - 135px) / 36);
-        max-width: calc((100% - 35px - 135px) / 36);
-        min-width: calc((100% - 35px - 135px) / 36);
-      }
-
-      .chassis-cell {
-        width: calc((100% - 35px - 135px) / 36);
-        max-width: calc((100% - 35px - 135px) / 36);
-        min-width: calc((100% - 35px - 135px) / 36);
+        background: linear-gradient(135deg, #34ce57 0%, #2bb380 100%);
+        color: white;
+        font-weight: 500;
+        padding: 3px 1px;
+        font-size: 0.65rem;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        width: calc((100% - 50px - 180px) / 36);
+        max-width: calc((100% - 50px - 180px) / 36);
+        min-width: calc((100% - 50px - 180px) / 36);
       }
 
       .week-header {
-        font-size: 0.65rem;
-      }
-
-      .week-label {
-        font-size: 0.55rem;
-      }
-
-      .week-number-input {
-        width: 16px;
-        height: 14px;
-        font-size: 0.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        padding: 4px 2px;
+        font-size: 0.75rem;
+        border: 1px solid #ddd;
       }
 
       .column-header {
-        font-size: 0.55rem;
+        width: calc((100% - 50px - 180px) / 36);
+        max-width: calc((100% - 50px - 180px) / 36);
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4c93 100%);
+        color: white;
+        font-weight: 500;
+        padding: 3px 1px;
+        font-size: 0.65rem;
+        border: 1px solid #ddd;
+        overflow: hidden;
       }
 
-      .color-circle {
-        width: 10px;
-        height: 10px;
-        border-width: 1.5px;
+      .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        height: 100%;
+        padding: 4px;
+      }
+
+      .week-input-container {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        justify-content: center;
+      }
+
+      .week-number-input {
+        width: 22px;
+        height: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-align: center;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 1px;
+        outline: none;
+      }
+
+      .week-number-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .week-label {
+        font-size: 0.65rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .row-number {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        padding: 0;
+        border-right: 2px solid #667eea;
+        width: 50px;
+        text-align: center;
+        vertical-align: middle;
       }
 
       .grid-cell {
-        min-height: 20px;
+        width: calc((100% - 50px - 180px) / 36);
+        max-width: calc((100% - 50px - 180px) / 36);
+        padding: 1px;
+        height: calc((100vh - 120px) / 30);
+        min-height: 22px;
+        overflow: hidden;
       }
 
-      .app-footer {
-        font-size: 0.65rem;
-        padding: 5px 10px;
-      }
-    }
-
-    /* Landscape orientation optimization for tablets */
-    @media (max-width: 1024px) and (orientation: landscape) {
-      .legend {
-        max-height: 100px;
+      .chassis-cell {
+        width: calc((100% - 50px - 180px) / 36);
+        max-width: calc((100% - 50px - 180px) / 36);
+        min-width: calc((100% - 50px - 180px) / 36);
+        background: #e8f5e9;
       }
 
-      .main-content {
-        flex-direction: row;
-      }
-
-      .legend {
-        width: 180px;
-        min-width: 180px;
-        max-width: 180px;
-        border-right: 1px solid #ddd;
-        border-bottom: none;
-        max-height: none;
-      }
-
-      .color-legend {
-        flex-direction: column;
-      }
-
-      .legend-item {
-        flex-direction: column;
-      }
-    }
-
-    /* Print styles */
-    @media print {
-      .app {
-        height: auto;
-      }
-
-      .upload-button,
-      .clear-data-button,
-      .image-upload-section {
-        display: none;
-      }
-
-      .legend {
-        page-break-inside: avoid;
-      }
-
-      .capability-matrix {
-        page-break-inside: avoid;
-      }
-    }
-
-    /* Smooth scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Better touch targets for mobile */
-    @media (hover: none) and (pointer: coarse) {
-      .week-number-input,
-      .upload-button,
-      .clear-data-button {
-        min-height: 32px;
+      .cell-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
       }
 
       .cell-dropdown {
-        min-height: 28px;
-        font-size: 0.65rem;
+        width: 100%;
+        height: 100%;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        outline: none;
+        cursor: pointer;
+        font-size: 0;
+        font-weight: 600;
+        text-align: center;
+        padding: 0;
+        transition: all 0.2s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none;
+        text-indent: 0;
+        color: transparent;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
-      .update-field input {
-        min-height: 32px;
+      .cell-dropdown option {
+        font-size: 0.8rem;
+        color: #000;
+        text-indent: 0;
+        padding: 5px;
+        font-weight: 500;
       }
-    }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+      .cell-dropdown:hover {
+        border-color: rgba(0, 0, 0, 0.4);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2),
+          0 0 5px rgba(0, 0, 0, 0.1);
+      }
 
-    const App = () => {
-      // Define the color options/capabilities
-      const colorOptions = [
-        { id: "", color: "transparent", label: "None" },
-        { id: "green", color: "#4CAF50", label: "Green" },
-        { id: "red", color: "#f44336", label: "Red" },
-        { id: "yellow", color: "#FFEB3B", label: "Yellow" },
-        { id: "black", color: "#333333", label: "Black" },
-        { id: "orange", color: "#FF9800", label: "Orange" },
-        { id: "blue", color: "#2196F3", label: "Blue" },
-      ];
+      .cell-dropdown:focus {
+        border-color: #2196f3;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+      }
 
-      // Create initial grid state (30 rows, 12 weeks × 3 columns = 36 columns)
-      const createInitialGrid = () => {
-        const grid = {};
-        for (let row = 1; row <= 30; row++) {
-          for (let week = 1; week <= 12; week++) {
-            for (let col = 1; col <= 3; col++) {
-              grid[`${row}-${week}-${col}`] = "";
+      .app-footer {
+        padding: 8px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: right;
+        font-size: 0.85rem;
+        font-weight: 500;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+
+      .app-footer span {
+        opacity: 0.95;
+        letter-spacing: 0.3px;
+      }
+
+      .cell-dropdown:hover {
+        opacity: 0.9;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+      }
+
+      .cell-dropdown:focus {
+        box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.5);
+      }
+
+      .cell-dropdown option {
+        background: white;
+        color: #333;
+        font-weight: 500;
+        padding: 8px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1400px) {
+        .csv-buttons {
+          top: 6px;
+          right: 12px;
+          gap: 6px;
+        }
+
+        .csv-button {
+          font-size: 0.75rem;
+          padding: 5px 10px;
+        }
+
+        .legend {
+          width: 150px;
+          min-width: 150px;
+          max-width: 150px;
+        }
+
+        .app-header h1 {
+          font-size: 1.4rem;
+        }
+
+        .update-field input {
+          width: 90px;
+          font-size: 0.75rem;
+        }
+
+        .week-number-input {
+          width: 20px;
+          font-size: 0.6rem;
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .legend {
+          width: 130px;
+          min-width: 130px;
+          max-width: 130px;
+          padding: 8px;
+        }
+
+        .legend h3 {
+          font-size: 0.9rem;
+        }
+
+        .app-header h1 {
+          font-size: 1.3rem;
+        }
+
+        .update-field label {
+          font-size: 0.75rem;
+        }
+
+        .update-field input {
+          width: 85px;
+          font-size: 0.7rem;
+        }
+
+        .chassis-cell,
+        .priority-header {
+          width: calc((100% - 50px - 165px) / 36);
+          max-width: calc((100% - 50px - 165px) / 36);
+          min-width: calc((100% - 50px - 165px) / 36);
+        }
+
+        .grid-cell {
+          width: calc((100% - 50px - 165px) / 36);
+          max-width: calc((100% - 50px - 165px) / 36);
+        }
+
+        .column-header {
+          width: calc((100% - 50px - 165px) / 36);
+          max-width: calc((100% - 50px - 165px) / 36);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .main-content {
+          flex-direction: column;
+        }
+
+        .legend {
+          width: 100%;
+          max-width: 100%;
+          min-width: 100%;
+          padding: 10px;
+          border-right: none;
+          border-bottom: 1px solid #ddd;
+          max-height: 150px;
+          overflow-y: auto;
+        }
+
+        .legend h3 {
+          margin-bottom: 8px;
+        }
+
+        .color-legend {
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 10px;
+          justify-content: center;
+        }
+
+        .legend-item {
+          flex-direction: row;
+          gap: 8px;
+          padding: 6px 10px;
+          min-width: auto;
+        }
+
+        .uploaded-image {
+          max-width: 50px;
+        }
+
+        .color-image {
+          height: 40px;
+        }
+
+        .matrix-container {
+          flex: 1;
+          overflow: hidden;
+        }
+
+        .capability-matrix tbody {
+          max-height: calc(100vh - 280px);
+        }
+
+        .app-header h1 {
+          font-size: 1.2rem;
+        }
+
+        .csv-buttons {
+          position: static;
+          justify-content: center;
+          margin-bottom: 8px;
+        }
+
+        .csv-button {
+          font-size: 0.7rem;
+          padding: 4px 8px;
+        }
+
+        .update-fields-row {
+          gap: 10px;
+        }
+
+        .update-field input {
+          width: 80px;
+          font-size: 0.7rem;
+        }
+
+        .clear-data-button {
+          font-size: 0.75rem;
+          padding: 4px 10px;
+        }
+
+        .grid-cell,
+        .chassis-cell {
+          min-height: 25px;
+        }
+
+        .capability-matrix tbody {
+          max-height: calc(100vh - 250px);
+        }
+
+        .app-footer {
+          font-size: 0.75rem;
+          padding: 6px 15px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .app-header {
+          padding: 6px 10px;
+        }
+
+        .app-header h1 {
+          font-size: 1.1rem;
+          margin-bottom: 6px;
+        }
+
+        .csv-buttons {
+          position: static;
+          justify-content: center;
+          margin-bottom: 8px;
+          gap: 8px;
+        }
+
+        .csv-button {
+          font-size: 0.7rem;
+          padding: 5px 10px;
+        }
+
+        .update-fields-row {
+          flex-direction: column;
+          gap: 6px;
+          align-items: center;
+        }
+
+        .update-field {
+          width: 100%;
+          max-width: 250px;
+          justify-content: space-between;
+        }
+
+        .update-field input {
+          width: 120px;
+          font-size: 0.7rem;
+        }
+
+        .clear-data-button {
+          width: 100%;
+          max-width: 250px;
+          margin-top: 8px;
+        }
+
+        .legend {
+          max-height: 120px;
+          padding: 8px;
+        }
+
+        .legend h3 {
+          font-size: 0.85rem;
+          margin-bottom: 6px;
+        }
+
+        .legend-item {
+          padding: 5px 8px;
+        }
+
+        .legend-color-circle {
+          width: 20px;
+          height: 20px;
+        }
+
+        .uploaded-image {
+          max-width: 40px;
+        }
+
+        .color-image {
+          height: 35px;
+        }
+
+        .upload-button {
+          font-size: 0.7rem;
+          padding: 3px 8px;
+        }
+
+        .capability-matrix th,
+        .capability-matrix td {
+          font-size: 0.6rem;
+        }
+
+        .row-header {
+          width: 40px;
+          font-size: 0.7rem;
+          padding: 4px 2px;
+        }
+
+        .row-number {
+          width: 40px;
+        }
+
+        .chassis-header {
+          font-size: 0.7rem;
+          padding: 3px 2px;
+        }
+
+        .priority-header {
+          font-size: 0.6rem;
+          width: calc((100% - 40px - 150px) / 36);
+          max-width: calc((100% - 40px - 150px) / 36);
+          min-width: calc((100% - 40px - 150px) / 36);
+          padding: 2px 1px;
+        }
+
+        .chassis-cell {
+          width: calc((100% - 40px - 150px) / 36);
+          max-width: calc((100% - 40px - 150px) / 36);
+          min-width: calc((100% - 40px - 150px) / 36);
+        }
+
+        .week-header {
+          font-size: 0.7rem;
+          padding: 3px 2px;
+        }
+
+        .week-label {
+          font-size: 0.6rem;
+        }
+
+        .week-number-input {
+          width: 18px;
+          height: 16px;
+          font-size: 0.55rem;
+        }
+
+        .column-header {
+          font-size: 0.6rem;
+          padding: 2px 1px;
+          width: calc((100% - 40px - 150px) / 36);
+          max-width: calc((100% - 40px - 150px) / 36);
+        }
+
+        .grid-cell {
+          min-height: 22px;
+          width: calc((100% - 40px - 150px) / 36);
+          max-width: calc((100% - 40px - 150px) / 36);
+        }
+
+        .capability-matrix tbody {
+          max-height: calc(100vh - 300px);
+        }
+
+        .app-footer {
+          font-size: 0.7rem;
+          padding: 6px 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .app {
+          height: 100vh;
+          height: 100dvh; /* Dynamic viewport height for mobile */
+        }
+
+        .app-header {
+          padding: 5px 8px;
+        }
+
+        .app-header h1 {
+          font-size: 1rem;
+          margin-bottom: 5px;
+        }
+
+        .csv-buttons {
+          flex-direction: column;
+          gap: 6px;
+          width: 100%;
+          max-width: 200px;
+          margin: 0 auto 8px auto;
+        }
+
+        .csv-button {
+          width: 100%;
+          font-size: 0.7rem;
+          padding: 6px 10px;
+        }
+
+        .update-field label {
+          font-size: 0.7rem;
+        }
+
+        .update-field input {
+          width: 100px;
+          font-size: 0.65rem;
+          padding: 2px 4px;
+        }
+
+        .clear-data-button {
+          font-size: 0.7rem;
+          padding: 4px 8px;
+        }
+
+        .legend {
+          max-height: 100px;
+          padding: 6px;
+        }
+
+        .legend h3 {
+          font-size: 0.8rem;
+        }
+
+        .legend-item {
+          padding: 4px 6px;
+          gap: 6px;
+        }
+
+        .legend-color-circle {
+          width: 18px;
+          height: 18px;
+        }
+
+        .uploaded-image {
+          max-width: 35px;
+        }
+
+        .color-image {
+          height: 30px;
+        }
+
+        .upload-button {
+          font-size: 0.65rem;
+          padding: 2px 6px;
+        }
+
+        .matrix-container {
+          overflow: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .capability-matrix {
+          min-width: 600px;
+        }
+
+        .capability-matrix tbody {
+          max-height: calc(100vh - 280px);
+          max-height: calc(100dvh - 280px);
+        }
+
+        .row-header {
+          width: 35px;
+          font-size: 0.65rem;
+          padding: 3px 1px;
+        }
+
+        .row-number {
+          width: 35px;
+          font-size: 0.65rem;
+        }
+
+        .chassis-header {
+          font-size: 0.65rem;
+        }
+
+        .priority-header {
+          font-size: 0.55rem;
+          width: calc((100% - 35px - 135px) / 36);
+          max-width: calc((100% - 35px - 135px) / 36);
+          min-width: calc((100% - 35px - 135px) / 36);
+        }
+
+        .chassis-cell {
+          width: calc((100% - 35px - 135px) / 36);
+          max-width: calc((100% - 35px - 135px) / 36);
+          min-width: calc((100% - 35px - 135px) / 36);
+        }
+
+        .week-header {
+          font-size: 0.65rem;
+        }
+
+        .week-label {
+          font-size: 0.55rem;
+        }
+
+        .week-number-input {
+          width: 16px;
+          height: 14px;
+          font-size: 0.5rem;
+        }
+
+        .column-header {
+          font-size: 0.55rem;
+        }
+
+        .color-circle {
+          width: 10px;
+          height: 10px;
+          border-width: 1.5px;
+        }
+
+        .grid-cell {
+          min-height: 20px;
+        }
+
+        .app-footer {
+          font-size: 0.65rem;
+          padding: 5px 10px;
+        }
+      }
+
+      /* Landscape orientation optimization for tablets */
+      @media (max-width: 1024px) and (orientation: landscape) {
+        .legend {
+          max-height: 100px;
+        }
+
+        .main-content {
+          flex-direction: row;
+        }
+
+        .legend {
+          width: 180px;
+          min-width: 180px;
+          max-width: 180px;
+          border-right: 1px solid #ddd;
+          border-bottom: none;
+          max-height: none;
+        }
+
+        .color-legend {
+          flex-direction: column;
+        }
+
+        .legend-item {
+          flex-direction: column;
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        .app {
+          height: auto;
+        }
+
+        .upload-button,
+        .clear-data-button,
+        .image-upload-section {
+          display: none;
+        }
+
+        .legend {
+          page-break-inside: avoid;
+        }
+
+        .capability-matrix {
+          page-break-inside: avoid;
+        }
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Better touch targets for mobile */
+      @media (hover: none) and (pointer: coarse) {
+        .week-number-input,
+        .upload-button,
+        .clear-data-button {
+          min-height: 32px;
+        }
+
+        .cell-dropdown {
+          min-height: 28px;
+          font-size: 0.65rem;
+        }
+
+        .update-field input {
+          min-height: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const App = () => {
+        // Define the color options/capabilities
+        const colorOptions = [
+          { id: "", color: "transparent", label: "None" },
+          { id: "green", color: "#4CAF50", label: "Green" },
+          { id: "red", color: "#f44336", label: "Red" },
+          { id: "yellow", color: "#FFEB3B", label: "Yellow" },
+          { id: "black", color: "#333333", label: "Black" },
+          { id: "orange", color: "#FF9800", label: "Orange" },
+          { id: "blue", color: "#2196F3", label: "Blue" },
+        ];
+
+        // Create initial grid state (30 rows, 12 weeks × 3 columns = 36 columns)
+        const createInitialGrid = () => {
+          const grid = {};
+          for (let row = 1; row <= 30; row++) {
+            for (let week = 1; week <= 12; week++) {
+              for (let col = 1; col <= 3; col++) {
+                grid[`${row}-${week}-${col}`] = "";
+              }
             }
           }
-        }
-        return grid;
-      };
+          return grid;
+        };
 
-      // Create initial chassis base state (30 rows × 3 sub-columns)
-      const createInitialChassisBase = () => {
-        const chassisBase = {};
-        for (let row = 1; row <= 30; row++) {
-          for (let col = 1; col <= 3; col++) {
-            chassisBase[`${row}-${col}`] = "";
+        // Create initial chassis base state (30 rows × 3 sub-columns)
+        const createInitialChassisBase = () => {
+          const chassisBase = {};
+          for (let row = 1; row <= 30; row++) {
+            for (let col = 1; col <= 3; col++) {
+              chassisBase[`${row}-${col}`] = "";
+            }
           }
-        }
-        return chassisBase;
-      };
+          return chassisBase;
+        };
 
-      // Create initial week numbers state
-      const createInitialWeekNumbers = () => {
-        const weekNumbers = {};
-        for (let week = 1; week <= 12; week++) {
-          weekNumbers[week] = week.toString().padStart(2, "0");
-        }
-        return weekNumbers;
-      };
+        // Create initial week numbers state
+        const createInitialWeekNumbers = () => {
+          const weekNumbers = {};
+          for (let week = 1; week <= 12; week++) {
+            weekNumbers[week] = week.toString().padStart(2, "0");
+          }
+          return weekNumbers;
+        };
 
-      // Local Storage helper functions
-      const saveToLocalStorage = (key, data) => {
-        try {
-          localStorage.setItem(key, JSON.stringify(data));
-        } catch (error) {
-          console.error("Error saving to localStorage:", error);
-        }
-      };
+        // Local Storage helper functions
+        const saveToLocalStorage = (key, data) => {
+          try {
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (error) {
+            console.error("Error saving to localStorage:", error);
+          }
+        };
 
-      const loadFromLocalStorage = (key, defaultValue) => {
-        try {
-          const saved = localStorage.getItem(key);
-          return saved ? JSON.parse(saved) : defaultValue;
-        } catch (error) {
-          console.error("Error loading from localStorage:", error);
-          return defaultValue;
-        }
-      };
+        const loadFromLocalStorage = (key, defaultValue) => {
+          try {
+            const saved = localStorage.getItem(key);
+            return saved ? JSON.parse(saved) : defaultValue;
+          } catch (error) {
+            console.error("Error loading from localStorage:", error);
+            return defaultValue;
+          }
+        };
 
-      // Initialize state with localStorage data or defaults
-      const [gridData, setGridData] = useState(() =>
-        loadFromLocalStorage("capabilityMatrix_gridData", createInitialGrid())
-      );
+        // Initialize state with localStorage data or defaults
+        const [gridData, setGridData] = useState(() =>
+          loadFromLocalStorage("capabilityMatrix_gridData", createInitialGrid())
+        );
 
-      const [chassisBaseData, setChassisBaseData] = useState(() =>
-        loadFromLocalStorage("capabilityMatrix_chassisBase", createInitialChassisBase())
-      );
-
-      const [weekNumbers, setWeekNumbers] = useState(() =>
-        loadFromLocalStorage(
-          "capabilityMatrix_weekNumbers",
-          createInitialWeekNumbers()
-        )
-      );
-
-      // State for update information
-      const [updateInfo, setUpdateInfo] = useState(() =>
-        loadFromLocalStorage("capabilityMatrix_updateInfo", {
-          updatedDate: "",
-          updatedTime: "",
-          updatedBy: "",
-        })
-      );
-
-      // State for color images
-      const [colorImages, setColorImages] = useState(() =>
-        loadFromLocalStorage("capabilityMatrix_colorImages", {})
-      );
-
-      // Auto-save to localStorage whenever data changes
-      useEffect(() => {
-        saveToLocalStorage("capabilityMatrix_gridData", gridData);
-      }, [gridData]);
-
-      useEffect(() => {
-        saveToLocalStorage("capabilityMatrix_chassisBase", chassisBaseData);
-      }, [chassisBaseData]);
-
-      useEffect(() => {
-        saveToLocalStorage("capabilityMatrix_weekNumbers", weekNumbers);
-      }, [weekNumbers]);
-
-      useEffect(() => {
-        saveToLocalStorage("capabilityMatrix_updateInfo", updateInfo);
-      }, [updateInfo]);
-
-      useEffect(() => {
-        saveToLocalStorage("capabilityMatrix_colorImages", colorImages);
-      }, [colorImages]);
-
-      const handleColorChange = (cellId, colorId) => {
-        setGridData((prevGrid) => ({
-          ...prevGrid,
-          [cellId]: colorId,
-        }));
-      };
-
-      const handleChassisBaseChange = (cellId, colorId) => {
-        setChassisBaseData((prevData) => ({
-          ...prevData,
-          [cellId]: colorId,
-        }));
-      };
-
-      const handleWeekNumberChange = (week, value) => {
-        // Only allow 2 digits
-        if (value.length <= 2 && /^\d*$/.test(value)) {
-          setWeekNumbers((prevWeekNumbers) => ({
-            ...prevWeekNumbers,
-            [week]: value,
-          }));
-        }
-      };
-
-      const handleUpdateInfoChange = (field, value) => {
-        setUpdateInfo((prevInfo) => ({
-          ...prevInfo,
-          [field]: value,
-        }));
-      };
-
-      const handleImageUpload = (colorId, event) => {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            setColorImages((prevImages) => ({
-              ...prevImages,
-              [colorId]: e.target.result,
-            }));
-          };
-          reader.readAsDataURL(file);
-        }
-      };
-
-      const clearAllData = () => {
-        if (
-          window.confirm(
-            "Are you sure you want to clear all data? This cannot be undone."
+        const [chassisBaseData, setChassisBaseData] = useState(() =>
+          loadFromLocalStorage(
+            "capabilityMatrix_chassisBase",
+            createInitialChassisBase()
           )
-        ) {
-          // Clear localStorage
-          localStorage.removeItem("capabilityMatrix_gridData");
-          localStorage.removeItem("capabilityMatrix_chassisBase");
-          localStorage.removeItem("capabilityMatrix_weekNumbers");
-          localStorage.removeItem("capabilityMatrix_updateInfo");
-          localStorage.removeItem("capabilityMatrix_colorImages");
+        );
 
-          // Reset state to defaults
-          setGridData(createInitialGrid());
-          setChassisBaseData(createInitialChassisBase());
-          setWeekNumbers(createInitialWeekNumbers());
-          setUpdateInfo({
+        const [weekNumbers, setWeekNumbers] = useState(() =>
+          loadFromLocalStorage(
+            "capabilityMatrix_weekNumbers",
+            createInitialWeekNumbers()
+          )
+        );
+
+        // State for update information
+        const [updateInfo, setUpdateInfo] = useState(() =>
+          loadFromLocalStorage("capabilityMatrix_updateInfo", {
             updatedDate: "",
             updatedTime: "",
             updatedBy: "",
-          });
-          setColorImages({});
-        }
-      };
+          })
+        );
 
-      // Export data to CSV
-      const exportToCSV = () => {
-        try {
-          const data = {
-            gridData,
-            chassisBaseData,
-            weekNumbers,
-            updateInfo,
-            colorImages,
-            exportDate: new Date().toISOString(),
-          };
+        // State for color images
+        const [colorImages, setColorImages] = useState(() =>
+          loadFromLocalStorage("capabilityMatrix_colorImages", {})
+        );
 
-          // Convert to CSV format
-          const csvContent = "data:text/csv;charset=utf-8," + 
-            "Capability Matrix Data Export\n" +
-            "Export Date," + new Date().toLocaleString() + "\n\n" +
-            "Grid Data\n" +
-            Object.entries(gridData).map(([key, value]) => `${key},${value}`).join("\n") +
-            "\n\nChassis Base Data\n" +
-            Object.entries(chassisBaseData).map(([key, value]) => `${key},${value}`).join("\n") +
-            "\n\nWeek Numbers\n" +
-            Object.entries(weekNumbers).map(([key, value]) => `${key},${value}`).join("\n") +
-            "\n\nUpdate Info\n" +
-            Object.entries(updateInfo).map(([key, value]) => `${key},${value}`).join("\n") +
-            "\n\nColor Images\n" +
-            Object.entries(colorImages).map(([key, value]) => `${key},${value.substring(0, 50)}...`).join("\n");
+        // Auto-save to localStorage whenever data changes
+        useEffect(() => {
+          saveToLocalStorage("capabilityMatrix_gridData", gridData);
+        }, [gridData]);
 
-          const encodedUri = encodeURI(csvContent);
-          const link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download", `capability_matrix_backup_${new Date().toISOString().split('T')[0]}.csv`);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          alert("Data exported successfully!");
-        } catch (error) {
-          console.error("Error exporting data:", error);
-          alert("Error exporting data. Please try again.");
-        }
-      };
+        useEffect(() => {
+          saveToLocalStorage("capabilityMatrix_chassisBase", chassisBaseData);
+        }, [chassisBaseData]);
 
-      // Import data from CSV
-      const importFromCSV = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+        useEffect(() => {
+          saveToLocalStorage("capabilityMatrix_weekNumbers", weekNumbers);
+        }, [weekNumbers]);
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const content = e.target.result;
-            const lines = content.split("\n");
-            
-            let section = "";
-            const newGridData = {};
-            const newChassisBaseData = {};
-            const newWeekNumbers = {};
-            let newUpdateInfo = {};
-            const newColorImages = {};
+        useEffect(() => {
+          saveToLocalStorage("capabilityMatrix_updateInfo", updateInfo);
+        }, [updateInfo]);
 
-            lines.forEach(line => {
-              line = line.trim();
-              if (!line) return;
-              
-              if (line === "Grid Data") section = "grid";
-              else if (line === "Chassis Base Data") section = "chassis";
-              else if (line === "Week Numbers") section = "weeks";
-              else if (line === "Update Info") section = "update";
-              else if (line === "Color Images") section = "images";
-              else if (line.includes("Capability Matrix") || line.includes("Export Date")) return;
-              else {
-                const [key, value] = line.split(",");
-                if (!key) return;
-                
-                if (section === "grid") newGridData[key] = value || "";
-                else if (section === "chassis") newChassisBaseData[key] = value || "";
-                else if (section === "weeks") newWeekNumbers[key] = value || "";
-                else if (section === "update") newUpdateInfo[key] = value || "";
-                else if (section === "images" && value) newColorImages[key] = value;
-              }
-            });
+        useEffect(() => {
+          saveToLocalStorage("capabilityMatrix_colorImages", colorImages);
+        }, [colorImages]);
 
-            if (Object.keys(newGridData).length > 0) {
-              if (window.confirm("Are you sure you want to import this data? Current data will be replaced.")) {
-                setGridData(newGridData);
-                setChassisBaseData(newChassisBaseData);
-                setWeekNumbers(newWeekNumbers);
-                setUpdateInfo(newUpdateInfo);
-                if (Object.keys(newColorImages).length > 0) {
-                  setColorImages(newColorImages);
-                }
-                alert("Data imported successfully!");
-              }
-            } else {
-              alert("Invalid CSV file format. Please use a file exported from this application.");
-            }
-          } catch (error) {
-            console.error("Error importing data:", error);
-            alert("Error importing data. Please check the file format.");
+        const handleColorChange = (cellId, colorId) => {
+          setGridData((prevGrid) => ({
+            ...prevGrid,
+            [cellId]: colorId,
+          }));
+        };
+
+        const handleChassisBaseChange = (cellId, colorId) => {
+          setChassisBaseData((prevData) => ({
+            ...prevData,
+            [cellId]: colorId,
+          }));
+        };
+
+        const handleWeekNumberChange = (week, value) => {
+          // Only allow 2 digits
+          if (value.length <= 2 && /^\d*$/.test(value)) {
+            setWeekNumbers((prevWeekNumbers) => ({
+              ...prevWeekNumbers,
+              [week]: value,
+            }));
           }
         };
-        reader.readAsText(file);
-        
-        // Reset input
-        event.target.value = "";
-      };
 
-      const getColorById = (id) => {
-        return colorOptions.find((color) => color.id === id) || colorOptions[0];
-      };
+        const handleUpdateInfoChange = (field, value) => {
+          setUpdateInfo((prevInfo) => ({
+            ...prevInfo,
+            [field]: value,
+          }));
+        };
 
-      const generateWeekHeaders = () => {
-        const weekHeaders = [];
-        const columnHeaders = [];
+        const handleImageUpload = (colorId, event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              setColorImages((prevImages) => ({
+                ...prevImages,
+                [colorId]: e.target.result,
+              }));
+            };
+            reader.readAsDataURL(file);
+          }
+        };
 
-        for (let week = 1; week <= 12; week++) {
-          // Week header that spans 3 columns
-          weekHeaders.push(
-            <th key={week} className="week-header" colSpan={3}>
-              <div className="header-content">
-                <div className="week-input-container">
-                  <span className="week-label">Week No</span>
-                  <input
-                    type="text"
-                    className="week-number-input"
-                    value={weekNumbers[week]}
-                    onChange={(e) => handleWeekNumberChange(week, e.target.value)}
-                    maxLength={2}
-                    placeholder="00"
-                  />
-                </div>
-              </div>
-            </th>
+        const clearAllData = () => {
+          if (
+            window.confirm(
+              "Are you sure you want to clear all data? This cannot be undone."
+            )
+          ) {
+            // Clear localStorage
+            localStorage.removeItem("capabilityMatrix_gridData");
+            localStorage.removeItem("capabilityMatrix_chassisBase");
+            localStorage.removeItem("capabilityMatrix_weekNumbers");
+            localStorage.removeItem("capabilityMatrix_updateInfo");
+            localStorage.removeItem("capabilityMatrix_colorImages");
+
+            // Reset state to defaults
+            setGridData(createInitialGrid());
+            setChassisBaseData(createInitialChassisBase());
+            setWeekNumbers(createInitialWeekNumbers());
+            setUpdateInfo({
+              updatedDate: "",
+              updatedTime: "",
+              updatedBy: "",
+            });
+            setColorImages({});
+          }
+        };
+
+        // Export data to CSV
+        const exportToCSV = () => {
+          try {
+            const data = {
+              gridData,
+              chassisBaseData,
+              weekNumbers,
+              updateInfo,
+              colorImages,
+              exportDate: new Date().toISOString(),
+            };
+
+            // Convert to CSV format
+            const csvContent =
+              "data:text/csv;charset=utf-8," +
+              "Capability Matrix Data Export\n" +
+              "Export Date," +
+              new Date().toLocaleString() +
+              "\n\n" +
+              "Grid Data\n" +
+              Object.entries(gridData)
+                .map(([key, value]) => `${key},${value}`)
+                .join("\n") +
+              "\n\nChassis Base Data\n" +
+              Object.entries(chassisBaseData)
+                .map(([key, value]) => `${key},${value}`)
+                .join("\n") +
+              "\n\nWeek Numbers\n" +
+              Object.entries(weekNumbers)
+                .map(([key, value]) => `${key},${value}`)
+                .join("\n") +
+              "\n\nUpdate Info\n" +
+              Object.entries(updateInfo)
+                .map(([key, value]) => `${key},${value}`)
+                .join("\n") +
+              "\n\nColor Images\n" +
+              Object.entries(colorImages)
+                .map(([key, value]) => `${key},${value.substring(0, 50)}...`)
+                .join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute(
+              "download",
+              `capability_matrix_backup_${
+                new Date().toISOString().split("T")[0]
+              }.csv`
+            );
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert("Data exported successfully!");
+          } catch (error) {
+            console.error("Error exporting data:", error);
+            alert("Error exporting data. Please try again.");
+          }
+        };
+
+        // Import data from CSV
+        const importFromCSV = (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const content = e.target.result;
+              const lines = content.split("\n");
+
+              let section = "";
+              const newGridData = {};
+              const newChassisBaseData = {};
+              const newWeekNumbers = {};
+              let newUpdateInfo = {};
+              const newColorImages = {};
+
+              lines.forEach((line) => {
+                line = line.trim();
+                if (!line) return;
+
+                if (line === "Grid Data") section = "grid";
+                else if (line === "Chassis Base Data") section = "chassis";
+                else if (line === "Week Numbers") section = "weeks";
+                else if (line === "Update Info") section = "update";
+                else if (line === "Color Images") section = "images";
+                else if (
+                  line.includes("Capability Matrix") ||
+                  line.includes("Export Date")
+                )
+                  return;
+                else {
+                  const [key, value] = line.split(",");
+                  if (!key) return;
+
+                  if (section === "grid") newGridData[key] = value || "";
+                  else if (section === "chassis")
+                    newChassisBaseData[key] = value || "";
+                  else if (section === "weeks")
+                    newWeekNumbers[key] = value || "";
+                  else if (section === "update")
+                    newUpdateInfo[key] = value || "";
+                  else if (section === "images" && value)
+                    newColorImages[key] = value;
+                }
+              });
+
+              if (Object.keys(newGridData).length > 0) {
+                if (
+                  window.confirm(
+                    "Are you sure you want to import this data? Current data will be replaced."
+                  )
+                ) {
+                  setGridData(newGridData);
+                  setChassisBaseData(newChassisBaseData);
+                  setWeekNumbers(newWeekNumbers);
+                  setUpdateInfo(newUpdateInfo);
+                  if (Object.keys(newColorImages).length > 0) {
+                    setColorImages(newColorImages);
+                  }
+                  alert("Data imported successfully!");
+                }
+              } else {
+                alert(
+                  "Invalid CSV file format. Please use a file exported from this application."
+                );
+              }
+            } catch (error) {
+              console.error("Error importing data:", error);
+              alert("Error importing data. Please check the file format.");
+            }
+          };
+          reader.readAsText(file);
+
+          // Reset input
+          event.target.value = "";
+        };
+
+        const getColorById = (id) => {
+          return (
+            colorOptions.find((color) => color.id === id) || colorOptions[0]
           );
+        };
 
-          // Column headers for each week (3 columns)
-          for (let col = 1; col <= 3; col++) {
-            columnHeaders.push(
-              <th key={`${week}-${col}`} className="column-header">
-                {col}
+        const generateWeekHeaders = () => {
+          const weekHeaders = [];
+          const columnHeaders = [];
+
+          for (let week = 1; week <= 12; week++) {
+            // Week header that spans 3 columns
+            weekHeaders.push(
+              <th key={week} className="week-header" colSpan={3}>
+                <div className="header-content">
+                  <div className="week-input-container">
+                    <span className="week-label">Week No</span>
+                    <input
+                      type="text"
+                      className="week-number-input"
+                      value={weekNumbers[week]}
+                      onChange={(e) =>
+                        handleWeekNumberChange(week, e.target.value)
+                      }
+                      maxLength={2}
+                      placeholder="00"
+                    />
+                  </div>
+                </div>
               </th>
             );
+
+            // Column headers for each week (3 columns)
+            for (let col = 1; col <= 3; col++) {
+              columnHeaders.push(
+                <th key={`${week}-${col}`} className="column-header">
+                  {col}
+                </th>
+              );
+            }
           }
-        }
 
-        return { weekHeaders, columnHeaders };
-      };
+          return { weekHeaders, columnHeaders };
+        };
 
-      const generateGridRows = () => {
-        const rows = [];
-        for (let row = 1; row <= 30; row++) {
-          const cells = [];
+        const generateGridRows = () => {
+          const rows = [];
+          for (let row = 1; row <= 30; row++) {
+            const cells = [];
 
-          // Row number cell
-          cells.push(
-            <td key={`row-${row}`} className="row-number">
-              {row}
-            </td>
-          );
-
-          // Chassis base cells (3 sub-columns)
-          for (let col = 1; col <= 3; col++) {
-            const cellId = `${row}-${col}`;
-            const selectedColorId = chassisBaseData[cellId];
-            const selectedColor = getColorById(selectedColorId);
-
+            // Row number cell
             cells.push(
-              <td 
-                key={`chassis-${cellId}`} 
-                className="grid-cell chassis-cell"
-              >
-                <div className="cell-content">
-                  <select
-                    className="cell-dropdown"
-                    value={selectedColorId}
-                    onChange={(e) => handleChassisBaseChange(cellId, e.target.value)}
-                    style={{
-                      backgroundColor: selectedColor.color,
-                      color: selectedColor.id === "yellow" ? "#333" : "#fff",
-                    }}
-                  >
-                    {colorOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <td key={`row-${row}`} className="row-number">
+                {row}
               </td>
             );
-          }
 
-          // Week cells (12 weeks × 3 columns = 36 cells per row)
-          for (let week = 1; week <= 12; week++) {
+            // Chassis base cells (3 sub-columns)
             for (let col = 1; col <= 3; col++) {
-              const cellId = `${row}-${week}-${col}`;
-              const selectedColorId = gridData[cellId];
+              const cellId = `${row}-${col}`;
+              const selectedColorId = chassisBaseData[cellId];
               const selectedColor = getColorById(selectedColorId);
 
               cells.push(
-                <td 
-                  key={cellId} 
-                  className="grid-cell"
+                <td
+                  key={`chassis-${cellId}`}
+                  className="grid-cell chassis-cell"
                 >
                   <div className="cell-content">
                     <select
                       className="cell-dropdown"
                       value={selectedColorId}
-                      onChange={(e) => handleColorChange(cellId, e.target.value)}
+                      onChange={(e) =>
+                        handleChassisBaseChange(cellId, e.target.value)
+                      }
                       style={{
                         backgroundColor: selectedColor.color,
                         color: selectedColor.id === "yellow" ? "#333" : "#fff",
@@ -1499,164 +1520,200 @@
                 </td>
               );
             }
+
+            // Week cells (12 weeks × 3 columns = 36 cells per row)
+            for (let week = 1; week <= 12; week++) {
+              for (let col = 1; col <= 3; col++) {
+                const cellId = `${row}-${week}-${col}`;
+                const selectedColorId = gridData[cellId];
+                const selectedColor = getColorById(selectedColorId);
+
+                cells.push(
+                  <td key={cellId} className="grid-cell">
+                    <div className="cell-content">
+                      <select
+                        className="cell-dropdown"
+                        value={selectedColorId}
+                        onChange={(e) =>
+                          handleColorChange(cellId, e.target.value)
+                        }
+                        style={{
+                          backgroundColor: selectedColor.color,
+                          color:
+                            selectedColor.id === "yellow" ? "#333" : "#fff",
+                        }}
+                      >
+                        {colorOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </td>
+                );
+              }
+            }
+
+            rows.push(<tr key={row}>{cells}</tr>);
           }
+          return rows;
+        };
 
-          rows.push(<tr key={row}>{cells}</tr>);
-        }
-        return rows;
-      };
-
-      return (
-        <div className="app">
-          <header className="app-header">
-            <div className="csv-buttons">
-              <input
-                type="file"
-                id="csvImport"
-                className="file-input"
-                accept=".csv"
-                onChange={importFromCSV}
-              />
-              <button
-                className="csv-button"
-                onClick={() => document.getElementById('csvImport').click()}
-                title="Import data from CSV file"
-              >
-                📥 Import CSV
-              </button>
-              <button
-                className="csv-button"
-                onClick={exportToCSV}
-                title="Export data to CSV file"
-              >
-                📤 Export CSV
-              </button>
-            </div>
-
-            <h1>3 Month Capability Matrix</h1>
-            <div className="update-info">
-              <div className="update-fields-row">
-                <div className="update-field">
-                  <label>Updated Date:</label>
-                  <input
-                    type="text"
-                    placeholder="Enter date"
-                    value={updateInfo.updatedDate}
-                    onChange={(e) =>
-                      handleUpdateInfoChange("updatedDate", e.target.value)
-                    }
-                  />
-                </div>
-                <div className="update-field">
-                  <label>Updated Time:</label>
-                  <input
-                    type="text"
-                    placeholder="Enter time"
-                    value={updateInfo.updatedTime}
-                    onChange={(e) =>
-                      handleUpdateInfoChange("updatedTime", e.target.value)
-                    }
-                  />
-                </div>
-                <div className="update-field">
-                  <label>Updated By:</label>
-                  <input
-                    type="text"
-                    placeholder="Enter name"
-                    value={updateInfo.updatedBy}
-                    onChange={(e) =>
-                      handleUpdateInfoChange("updatedBy", e.target.value)
-                    }
-                  />
-                </div>
+        return (
+          <div className="app">
+            <header className="app-header">
+              <div className="csv-buttons">
+                <input
+                  type="file"
+                  id="csvImport"
+                  className="file-input"
+                  accept=".csv"
+                  onChange={importFromCSV}
+                />
                 <button
-                  className="clear-data-button"
-                  onClick={clearAllData}
-                  title="Clear all saved data and reset to defaults"
+                  className="csv-button"
+                  onClick={() => document.getElementById("csvImport").click()}
+                  title="Import data from CSV file"
                 >
-                  Clear All Data
+                  📥 Import CSV
+                </button>
+                <button
+                  className="csv-button"
+                  onClick={exportToCSV}
+                  title="Export data to CSV file"
+                >
+                  📤 Export CSV
                 </button>
               </div>
-            </div>
-          </header>
 
-          <div className="main-content">
-            <div className="legend">
-              <h3>Color Legend</h3>
-              <div className="color-legend">
-                {colorOptions.slice(1).map((color) => (
-                  <div key={color.id} className="legend-item">
-                    <div
-                      className="legend-color-circle"
-                      style={{ backgroundColor: color.color }}
-                    ></div>
-                    <div className="image-upload-section">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(color.id, e)}
-                        className="image-upload-input"
-                        id={`upload-${color.id}`}
-                      />
-                      {!colorImages[color.id] ? (
-                        <label
-                          htmlFor={`upload-${color.id}`}
-                          className="upload-button"
-                        >
-                          Browse
-                        </label>
-                      ) : (
-                        <div className="uploaded-image">
-                          <label htmlFor={`upload-${color.id}`} style={{ cursor: 'pointer' }}>
-                            <img
-                              src={colorImages[color.id]}
-                              alt={`${color.label} representation`}
-                              className="color-image"
-                              title="Click to change image"
-                            />
-                          </label>
-                        </div>
-                      )}
-                    </div>
+              <h1>3 Month Capability Matrix</h1>
+              <div className="update-info">
+                <div className="update-fields-row">
+                  <div className="update-field">
+                    <label>Updated Date:</label>
+                    <input
+                      type="text"
+                      placeholder="Enter date"
+                      value={updateInfo.updatedDate}
+                      onChange={(e) =>
+                        handleUpdateInfoChange("updatedDate", e.target.value)
+                      }
+                    />
                   </div>
-                ))}
+                  <div className="update-field">
+                    <label>Updated Time:</label>
+                    <input
+                      type="text"
+                      placeholder="Enter time"
+                      value={updateInfo.updatedTime}
+                      onChange={(e) =>
+                        handleUpdateInfoChange("updatedTime", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="update-field">
+                    <label>Updated By:</label>
+                    <input
+                      type="text"
+                      placeholder="Enter name"
+                      value={updateInfo.updatedBy}
+                      onChange={(e) =>
+                        handleUpdateInfoChange("updatedBy", e.target.value)
+                      }
+                    />
+                  </div>
+                  <button
+                    className="clear-data-button"
+                    onClick={clearAllData}
+                    title="Clear all saved data and reset to defaults"
+                  >
+                    Clear All Data
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            <div className="main-content">
+              <div className="legend">
+                <h3>Color Legend</h3>
+                <div className="color-legend">
+                  {colorOptions.slice(1).map((color) => (
+                    <div key={color.id} className="legend-item">
+                      <div
+                        className="legend-color-circle"
+                        style={{ backgroundColor: color.color }}
+                      ></div>
+                      <div className="image-upload-section">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(color.id, e)}
+                          className="image-upload-input"
+                          id={`upload-${color.id}`}
+                        />
+                        {!colorImages[color.id] ? (
+                          <label
+                            htmlFor={`upload-${color.id}`}
+                            className="upload-button"
+                          >
+                            Browse
+                          </label>
+                        ) : (
+                          <div className="uploaded-image">
+                            <label
+                              htmlFor={`upload-${color.id}`}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <img
+                                src={colorImages[color.id]}
+                                alt={`${color.label} representation`}
+                                className="color-image"
+                                title="Click to change image"
+                              />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="matrix-container">
+                <table className="capability-matrix">
+                  <thead>
+                    <tr>
+                      <th className="row-header" rowSpan={2}>
+                        No.
+                      </th>
+                      <th className="chassis-header" colSpan={3}>
+                        Chassis base
+                      </th>
+                      {generateWeekHeaders().weekHeaders}
+                    </tr>
+                    <tr className="sub-header-row">
+                      <th className="priority-header">Pri 1</th>
+                      <th className="priority-header">Prio 2</th>
+                      <th className="priority-header">Prio 3</th>
+                      {generateWeekHeaders().columnHeaders}
+                    </tr>
+                  </thead>
+                  <tbody>{generateGridRows()}</tbody>
+                </table>
               </div>
             </div>
 
-            <div className="matrix-container">
-              <table className="capability-matrix">
-                <thead>
-                  <tr>
-                    <th className="row-header" rowSpan={2}>
-                      No.
-                    </th>
-                    <th className="chassis-header" colSpan={3}>
-                      Chassis base
-                    </th>
-                    {generateWeekHeaders().weekHeaders}
-                  </tr>
-                  <tr className="sub-header-row">
-                    <th className="priority-header">Sub 1</th>
-                    <th className="priority-header">Sub 2</th>
-                    <th className="priority-header">Sub 3</th>
-                    {generateWeekHeaders().columnHeaders}
-                  </tr>
-                </thead>
-                <tbody>{generateGridRows()}</tbody>
-              </table>
-            </div>
+            <footer className="app-footer">
+              <span>Powered by MAS KREEDA Balangoda - Digital</span>
+            </footer>
           </div>
+        );
+      };
 
-          <footer className="app-footer">
-            <span>Powered by MAS KREEDA Balangoda - Digital</span>
-          </footer>
-        </div>
-      );
-    };
-
-    // Render the app
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
-</body>
+      // Render the app
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
 </html>

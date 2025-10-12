@@ -4,7 +4,7 @@ import "./App.css";
 const App = () => {
   // Define the color options/capabilities
   const colorOptions = [
-    { id: "", color: "transparent", label: "None" },
+    { id: "", color: "transparent", label: "Select Color" },
     { id: "green", color: "#4CAF50", label: "Green" },
     { id: "red", color: "#f44336", label: "Red" },
     { id: "yellow", color: "#FFEB3B", label: "Yellow" },
@@ -71,7 +71,10 @@ const App = () => {
   );
 
   const [chassisBaseData, setChassisBaseData] = useState(() =>
-    loadFromLocalStorage("capabilityMatrix_chassisBase", createInitialChassisBase())
+    loadFromLocalStorage(
+      "capabilityMatrix_chassisBase",
+      createInitialChassisBase()
+    )
   );
 
   const [weekNumbers, setWeekNumbers] = useState(() =>
@@ -180,6 +183,122 @@ const App = () => {
     }
   };
 
+  // CSV Export function
+  const exportToCSV = () => {
+    const headers = [
+      "Row",
+      "Chassis Base 1",
+      "Chassis Base 2",
+      "Chassis Base 3",
+    ];
+
+    // Add week headers
+    for (let week = 1; week <= 12; week++) {
+      const weekNumber = weekNumbers[week];
+      headers.push(
+        `Week ${weekNumber}-1`,
+        `Week ${weekNumber}-2`,
+        `Week ${weekNumber}-3`
+      );
+    }
+
+    const csvData = [headers];
+
+    // Add data rows
+    for (let row = 1; row <= 30; row++) {
+      const rowData = [row];
+
+      // Add chassis base data
+      for (let col = 1; col <= 3; col++) {
+        rowData.push(chassisBaseData[`${row}-${col}`] || "");
+      }
+
+      // Add grid data
+      for (let week = 1; week <= 12; week++) {
+        for (let col = 1; col <= 3; col++) {
+          rowData.push(gridData[`${row}-${week}-${col}`] || "");
+        }
+      }
+
+      csvData.push(rowData);
+    }
+
+    // Convert to CSV string
+    const csvString = csvData
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+
+    // Download CSV file
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `capability-matrix-${
+      new Date().toISOString().split("T")[0]
+    }.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  // CSV Import function
+  const importFromCSV = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const csv = e.target.result;
+        const lines = csv.split("\n");
+
+        const newGridData = {};
+        const newChassisBaseData = {};
+
+        // Process data rows (skip header)
+        for (let i = 1; i < lines.length && i <= 30; i++) {
+          const cells = lines[i].split(",").map((c) => c.replace(/"/g, ""));
+          if (cells.length < 4) continue;
+
+          const row = i;
+
+          // Import chassis base data
+          for (let col = 1; col <= 3; col++) {
+            if (cells[col]) {
+              newChassisBaseData[`${row}-${col}`] = cells[col];
+            }
+          }
+
+          // Import grid data
+          let cellIndex = 4; // Start after chassis base columns
+          for (let week = 1; week <= 12; week++) {
+            for (let col = 1; col <= 3; col++) {
+              if (cells[cellIndex]) {
+                newGridData[`${row}-${week}-${col}`] = cells[cellIndex];
+              }
+              cellIndex++;
+            }
+          }
+        }
+
+        // Update state
+        setGridData((prevData) => ({ ...prevData, ...newGridData }));
+        setChassisBaseData((prevData) => ({
+          ...prevData,
+          ...newChassisBaseData,
+        }));
+
+        alert("CSV data imported successfully!");
+      } catch (error) {
+        alert("Error importing CSV file. Please check the file format.");
+        console.error("CSV import error:", error);
+      }
+    };
+
+    reader.readAsText(file);
+    // Reset file input
+    event.target.value = "";
+  };
+
   const getColorById = (id) => {
     return colorOptions.find((color) => color.id === id) || colorOptions[0];
   };
@@ -240,26 +359,26 @@ const App = () => {
         const selectedColor = getColorById(selectedColorId);
 
         cells.push(
-            <td key={cellId} className="grid-cell">
-              <div className="cell-content">
-                <select
-                  className="color-dropdown"
-                  value={selectedColorId}
-                  onChange={(e) => handleColorChange(cellId, e.target.value)}
-                  style={{
-                    backgroundColor: selectedColor.color,
-                    color: selectedColor.id === "yellow" ? "#333" : "#fff",
-                  }}
-                >
-                  {colorOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </td>
-          );
+          <td key={cellId} className="grid-cell">
+            <div className="cell-content">
+              <select
+                className="color-dropdown"
+                value={selectedColorId}
+                onChange={(e) => handleColorChange(cellId, e.target.value)}
+                style={{
+                  backgroundColor: selectedColor.color,
+                  color: selectedColor.id === "yellow" ? "#333" : "#fff",
+                }}
+              >
+                {colorOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </td>
+        );
       }
 
       // Week cells (12 weeks × 3 columns = 36 cells per row)
@@ -300,7 +419,32 @@ const App = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>3 Month Capability Matrix</h1>
+        <div className="header-top">
+          <h1>3 Month Capability Matrix</h1>
+          <div className="csv-buttons">
+            <button
+              className="csv-button"
+              onClick={exportToCSV}
+              title="Export data to CSV file"
+            >
+              Export.csv
+            </button>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={importFromCSV}
+              style={{ display: "none" }}
+              id="csv-import"
+            />
+            <button
+              className="csv-button"
+              onClick={() => document.getElementById("csv-import").click()}
+              title="Import data from CSV file"
+            >
+              Import.csv
+            </button>
+          </div>
+        </div>
         <div className="update-info">
           <div className="update-fields-row">
             <div className="update-field">
@@ -374,7 +518,10 @@ const App = () => {
                     </label>
                   ) : (
                     <div className="uploaded-image">
-                      <label htmlFor={`upload-${color.id}`} style={{ cursor: 'pointer' }}>
+                      <label
+                        htmlFor={`upload-${color.id}`}
+                        style={{ cursor: "pointer" }}
+                      >
                         <img
                           src={colorImages[color.id]}
                           alt={`${color.label} representation`}
@@ -403,9 +550,9 @@ const App = () => {
                 {generateWeekHeaders().weekHeaders}
               </tr>
               <tr>
-                <th className="priority-header">Sub 1</th>
-                <th className="priority-header">Sub 2</th>
-                <th className="priority-header">Sub 3</th>
+                <th className="priority-header">Pri 1</th>
+                <th className="priority-header">Prio 2</th>
+                <th className="priority-header">Prio 3</th>
                 {generateWeekHeaders().columnHeaders}
               </tr>
             </thead>
@@ -413,6 +560,11 @@ const App = () => {
           </table>
         </div>
       </div>
+      <footer className="app-footer">
+        <div className="powered-by">
+          Powered by MAS KREEDA Balangoda - Digital
+        </div>
+      </footer>
     </div>
   );
 };

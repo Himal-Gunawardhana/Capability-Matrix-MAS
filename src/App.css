@@ -16,12 +16,24 @@
   flex-shrink: 0;
 }
 
+.header-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.header-top .csv-buttons {
+  position: absolute;
+  right: 0;
+}
+
 .update-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-top: 5px;
 }
 
 .update-fields-row {
@@ -77,7 +89,7 @@
 }
 
 .app-header h1 {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 1.6rem;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -395,6 +407,8 @@
   transition: all 0.2s ease;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   padding: 0;
+  color: transparent;
+  text-indent: -9999px;
 }
 
 .color-dropdown:hover {
@@ -411,6 +425,8 @@
   color: #333;
   padding: 5px;
   text-shadow: none;
+  text-indent: 0;
+  font-size: 0.8rem;
 }
 
 /* Instructions styling */
@@ -536,4 +552,63 @@
   }
 }
 
+/* CSV Buttons */
+.csv-buttons {
+  display: flex;
+  gap: 8px;
+}
 
+.csv-button {
+  padding: 5px 12px;
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.csv-button:hover {
+  background: rgb(40, 167, 69);
+}
+
+/* Footer */
+.app-footer {
+  flex-shrink: 0;
+  padding: 8px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.powered-by {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Make table rows scrollable */
+.matrix-container {
+  flex: 1;
+  background: white;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.capability-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  max-width: 100%;
+}
+
+/* Ensure table can scroll vertically */
+.capability-matrix tbody {
+  overflow-y: auto;
+}

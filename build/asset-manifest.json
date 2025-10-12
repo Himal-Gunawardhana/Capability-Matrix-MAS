@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Capability-Matrix-MAS/static/css/main.4b237f2b.css",
-    "main.js": "/Capability-Matrix-MAS/static/js/main.ff6909d2.js",
-    "index.html": "/Capability-Matrix-MAS/index.html",
-    "main.4b237f2b.css.map": "/Capability-Matrix-MAS/static/css/main.4b237f2b.css.map",
-    "main.ff6909d2.js.map": "/Capability-Matrix-MAS/static/js/main.ff6909d2.js.map"
+    "main.css": "./static/css/main.b0c96d9a.css",
+    "main.js": "./static/js/main.8f988a57.js",
+    "index.html": "./index.html",
+    "main.b0c96d9a.css.map": "./static/css/main.b0c96d9a.css.map",
+    "main.8f988a57.js.map": "./static/js/main.8f988a57.js.map"
   },
   "entrypoints": [
-    "static/css/main.4b237f2b.css",
-    "static/js/main.ff6909d2.js"
+    "static/css/main.b0c96d9a.css",
+    "static/js/main.8f988a57.js"
   ]
 }
