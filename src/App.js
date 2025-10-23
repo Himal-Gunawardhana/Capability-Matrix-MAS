@@ -360,13 +360,22 @@ const App = () => {
       );
 
       // Chassis base cells (3 sub-columns)
+      // Add chassis base styling for highlighting the 3 sub-columns
+      const chassisColStyle = {
+        backgroundColor: "#037317ff", // Light blue highlight
+        border: "2px solid #025e13ff", // Royal blue border
+      };
       for (let col = 1; col <= 3; col++) {
         const cellId = `${row}-${col}`;
         const selectedColorId = chassisBaseData[cellId];
         const selectedColor = getColorById(selectedColorId);
 
         cells.push(
-          <td key={cellId} className="grid-cell">
+          <td
+            key={cellId}
+            className="grid-cell chassis-cell "
+            style={chassisColStyle}
+          >
             <div className="cell-content">
               <select
                 className="color-dropdown"
@@ -559,7 +568,7 @@ const App = () => {
                 {generateWeekHeaders().weekHeaders}
               </tr>
               <tr>
-                <th className="priority-header">Pri 1</th>
+                <th className="priority-header">Prio 1</th>
                 <th className="priority-header">Prio 2</th>
                 <th className="priority-header">Prio 3</th>
                 {generateWeekHeaders().columnHeaders}
