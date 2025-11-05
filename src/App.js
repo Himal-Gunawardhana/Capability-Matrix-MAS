@@ -2,18 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 const App = () => {
-  // Define the color options/capabilities
-  const colorOptions = [
-    { id: "", color: "transparent", label: "Select Color" },
-    { id: "green", color: "#4CAF50", label: "Green" },
-    { id: "red", color: "#f44336", label: "Red" },
-    { id: "yellow", color: "#FFEB3B", label: "Yellow" },
-    { id: "black", color: "#333333", label: "Black" },
-    { id: "orange", color: "#FF9800", label: "Orange" },
-    { id: "blue", color: "#2196F3", label: "Blue" },
-  ];
-
-  // Create initial grid state (30 rows, 12 weeks × 3 columns = 36 columns)
+  // Helper functions to create initial data
   const createInitialGrid = () => {
     const grid = {};
     for (let row = 1; row <= 30; row++) {
@@ -26,7 +15,6 @@ const App = () => {
     return grid;
   };
 
-  // Create initial chassis base state (30 rows × 3 sub-columns)
   const createInitialChassisBase = () => {
     const chassisBase = {};
     for (let row = 1; row <= 30; row++) {
@@ -37,7 +25,6 @@ const App = () => {
     return chassisBase;
   };
 
-  // Create initial week numbers state
   const createInitialWeekNumbers = () => {
     const weekNumbers = {};
     for (let week = 1; week <= 12; week++) {
@@ -93,9 +80,9 @@ const App = () => {
     })
   );
 
-  // State for color images
-  const [colorImages, setColorImages] = useState(() =>
-    loadFromLocalStorage("capabilityMatrix_colorImages", {})
+  // State for images list - dynamic list of images that users can add
+  const [imagesList, setImagesList] = useState(() =>
+    loadFromLocalStorage("capabilityMatrix_imagesList", [])
   );
 
   // Auto-save to localStorage whenever data changes
@@ -116,8 +103,8 @@ const App = () => {
   }, [updateInfo]);
 
   useEffect(() => {
-    saveToLocalStorage("capabilityMatrix_colorImages", colorImages);
-  }, [colorImages]);
+    saveToLocalStorage("capabilityMatrix_imagesList", imagesList);
+  }, [imagesList]);
 
   const handleColorChange = (cellId, colorId) => {
     setGridData((prevGrid) => ({
@@ -150,17 +137,41 @@ const App = () => {
     }));
   };
 
-  const handleImageUpload = (colorId, event) => {
+  const addNewImage = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setColorImages((prevImages) => ({
-          ...prevImages,
-          [colorId]: e.target.result,
-        }));
+        const newImage = {
+          id: `img-${Date.now()}`,
+          image: e.target.result,
+          name: file.name.split('.')[0]
+        };
+        setImagesList((prevList) => [...prevList, newImage]);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = (imageId) => {
+    if (window.confirm("Are you sure you want to remove this image?")) {
+      setImagesList((prevList) => prevList.filter(img => img.id !== imageId));
+      // Clear any cells using this image
+      const newGridData = { ...gridData };
+      Object.keys(newGridData).forEach(key => {
+        if (newGridData[key] === imageId) {
+          newGridData[key] = "";
+        }
+      });
+      setGridData(newGridData);
+      
+      const newChassisData = { ...chassisBaseData };
+      Object.keys(newChassisData).forEach(key => {
+        if (newChassisData[key] === imageId) {
+          newChassisData[key] = "";
+        }
+      });
+      setChassisBaseData(newChassisData);
     }
   };
 
@@ -175,18 +186,18 @@ const App = () => {
       localStorage.removeItem("capabilityMatrix_chassisBase");
       localStorage.removeItem("capabilityMatrix_weekNumbers");
       localStorage.removeItem("capabilityMatrix_updateInfo");
-      localStorage.removeItem("capabilityMatrix_colorImages");
+      localStorage.removeItem("capabilityMatrix_imagesList");
 
       // Reset state to defaults
       setGridData(createInitialGrid());
       setChassisBaseData(createInitialChassisBase());
       setWeekNumbers(createInitialWeekNumbers());
       setUpdateInfo({
-        updatedDate: "",
-        updatedTime: "",
-        updatedBy: "",
+        name: "",
+        role: "",
+        date: "",
       });
-      setColorImages({});
+      setImagesList([]);
     }
   };
 
@@ -306,8 +317,9 @@ const App = () => {
     event.target.value = "";
   };
 
-  const getColorById = (id) => {
-    return colorOptions.find((color) => color.id === id) || colorOptions[0];
+  const getImageById = (id) => {
+    if (!id) return null;
+    return imagesList.find((img) => img.id === id) || null;
   };
 
   const generateWeekHeaders = () => {
@@ -367,8 +379,9 @@ const App = () => {
       };
       for (let col = 1; col <= 3; col++) {
         const cellId = `${row}-${col}`;
-        const selectedColorId = chassisBaseData[cellId];
-        const selectedColor = getColorById(selectedColorId);
+        const selectedImageId = chassisBaseData[cellId];
+        const selectedImage = getImageById(selectedImageId);
+        const hasImage = selectedImage && selectedImage.image;
 
         cells.push(
           <td
@@ -377,23 +390,35 @@ const App = () => {
             style={chassisColStyle}
           >
             <div className="cell-content">
-              <select
+              <div
                 className="color-dropdown"
-                value={selectedColorId}
-                onChange={(e) =>
-                  handleChassisBaseChange(cellId, e.target.value)
-                }
-                style={{
-                  backgroundColor: selectedColor.color,
-                  color: selectedColor.id === "yellow" ? "#333" : "#fff",
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  const key = parseInt(e.key);
+                  if (!isNaN(key) && key >= 0 && key < imagesList.length) {
+                    e.preventDefault();
+                    handleChassisBaseChange(cellId, imagesList[key]?.id || '');
+                  }
                 }}
-              >
-                {colorOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                style={{
+                  backgroundColor: hasImage ? 'transparent' : '#ddd',
+                  backgroundImage: hasImage ? `url(${selectedImage.image})` : 'none',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+              {hasImage && (
+                <button
+                  className="clear-cell-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleChassisBaseChange(cellId, '');
+                  }}
+                  title="Clear cell"
+                >
+                  ×
+                </button>
+              )}
             </div>
           </td>
         );
@@ -403,27 +428,42 @@ const App = () => {
       for (let week = 1; week <= 12; week++) {
         for (let col = 1; col <= 3; col++) {
           const cellId = `${row}-${week}-${col}`;
-          const selectedColorId = gridData[cellId];
-          const selectedColor = getColorById(selectedColorId);
+          const selectedImageId = gridData[cellId];
+          const selectedImage = getImageById(selectedImageId);
+          const hasImage = selectedImage && selectedImage.image;
 
           cells.push(
             <td key={cellId} className="grid-cell">
               <div className="cell-content">
-                <select
+                <div
                   className="color-dropdown"
-                  value={selectedColorId}
-                  onChange={(e) => handleColorChange(cellId, e.target.value)}
-                  style={{
-                    backgroundColor: selectedColor.color,
-                    color: selectedColor.id === "yellow" ? "#333" : "#fff",
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    const key = parseInt(e.key);
+                    if (!isNaN(key) && key >= 0 && key < imagesList.length) {
+                      e.preventDefault();
+                      handleColorChange(cellId, imagesList[key]?.id || '');
+                    }
                   }}
-                >
-                  {colorOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                  style={{
+                    backgroundColor: hasImage ? 'transparent' : '#ddd',
+                    backgroundImage: hasImage ? `url(${selectedImage.image})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                />
+                {hasImage && (
+                  <button
+                    className="clear-cell-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleColorChange(cellId, '');
+                    }}
+                    title="Clear cell"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </td>
           );
@@ -511,47 +551,45 @@ const App = () => {
 
       <div className="main-content">
         <div className="legend">
-          <h3>Color Legend</h3>
+          <h3>Image Legend</h3>
+          <div className="legend-note">
+            <p><strong>Keyboard Shortcuts:</strong></p>
+            <p>Click on a cell and press the number key to assign image</p>
+          </div>
           <div className="color-legend">
-            {colorOptions.slice(1).map((color) => (
-              <div key={color.id} className="legend-item">
-                <div
-                  className="legend-color-circle"
-                  style={{ backgroundColor: color.color }}
-                ></div>
-                <div className="image-upload-section">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(color.id, e)}
-                    className="image-upload-input"
-                    id={`upload-${color.id}`}
+            {imagesList.map((image, index) => (
+              <div key={image.id} className="legend-item">
+                <div className="legend-key-number">{index}</div>
+                <div className="uploaded-image">
+                  <img
+                    src={image.image}
+                    alt={image.name}
+                    className="color-image"
+                    title={image.name}
                   />
-                  {!colorImages[color.id] ? (
-                    <label
-                      htmlFor={`upload-${color.id}`}
-                      className="upload-button"
-                    >
-                      Browse
-                    </label>
-                  ) : (
-                    <div className="uploaded-image">
-                      <label
-                        htmlFor={`upload-${color.id}`}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <img
-                          src={colorImages[color.id]}
-                          alt={`${color.label} representation`}
-                          className="color-image"
-                          title="Click to change image"
-                        />
-                      </label>
-                    </div>
-                  )}
                 </div>
+                <div className="legend-color-name">{image.name}</div>
+                <button 
+                  onClick={() => removeImage(image.id)}
+                  className="remove-image-btn"
+                  title="Remove this image"
+                >
+                  ×
+                </button>
               </div>
             ))}
+            <div className="legend-item add-image-item">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={addNewImage}
+                className="image-upload-input"
+                id="add-new-image"
+              />
+              <label htmlFor="add-new-image" className="add-image-button">
+                + Add Image
+              </label>
+            </div>
           </div>
         </div>
 
